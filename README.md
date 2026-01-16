@@ -1,63 +1,17 @@
-# Dewang Gogte - Personal Website
+# dewanggogte.github.io
 
-A minimal personal website built with [Astro](https://astro.build) and MDX.
+This is the source code for my personal website at [dewanggogte.com](https://dewanggogte.com).
+
+## About
+
+I built this as a minimal personal site to share a bit about myself, my work, and how to get in touch. It's hosted on GitHub Pages with a custom domain.
+
+## Tech Stack
+
+The site is built with [Astro](https://astro.build) and uses MDX for content, keeping things lightweight and fast.
 
 ## Structure
 
-```
-dewang-site/
-├── public/
-│   └── Dewang_Gogte_Resume.pdf
-├── src/
-│   ├── layouts/
-│   │   └── Base.astro          # Base HTML layout + global styles
-│   └── pages/
-│       └── index.mdx           # Homepage content (edit this!)
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
-```
-
-## Getting Started
-
-```bash
-# Install dependencies
-npm install
-
-# Start dev server
-npm run dev
-
-# Build for production
-npm run build
-```
-
-## Editing Content
-
-All your content lives in `src/pages/index.mdx`. It's just Markdown with some HTML components mixed in. Edit the text there and the site updates.
-
-## Deploying to Vercel
-
-1. Push this folder to a GitHub repo
-2. Go to [vercel.com](https://vercel.com) and import the repo
-3. Vercel auto-detects Astro — just click Deploy
-4. Add your custom domain in Settings → Domains
-
-## Adding Pages Later
-
-To add new pages (like `/photography` or `/blog`):
-
-1. Create a new file in `src/pages/`, e.g., `photography.mdx`
-2. Add the frontmatter and content
-3. Link to it from the homepage
-
-Example:
-```mdx
----
-layout: ../layouts/Base.astro
-title: Photography - Dewang Gogte
----
-
-# Photography
-
-Your content here...
-```
+- `src/pages/index.mdx` — Main page content
+- `src/layouts/Base.astro` — HTML layout and global styles
+- `public/` — Static assets like my resume PDF
