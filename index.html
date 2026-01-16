@@ -1,181 +1,156 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dewang Gogte — Personal Website</title>
-  <meta name="description" content="The personal website of Dewang Gogte." />
-  <meta name="author" content="Dewang Gogte" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dewang Gogte</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fdfcfb;
+            --text: #2c2c2c;
+            --text-light: #666;
+            --accent: #b85a3b;
+            --border: #e8e6e3;
+        }
 
-  <!-- Open Graph / Twitter -->
-  <meta property="og:title" content="Dewang Gogte" />
-  <meta property="og:description" content="The personal website of Dewang Gogte." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://example.com" />
-  <meta property="og:image" content="/og-image.png" />
-  <meta name="twitter:card" content="summary_large_image" />
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- Favicon (drop your file at /favicon.ico) -->
-  <link rel="icon" href="/favicon.ico" />
+        body {
+            font-family: 'Source Serif 4', Georgia, serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 18px;
+            line-height: 1.7;
+        }
 
-  <style>
-    :root {
-      --bg: #ffffff;
-      --fg: #0f172a; /* slate-900 */
-      --muted: #475569; /* slate-600 */
-      --link: #0ea5e9; /* sky-500 */
-      --card: #f8fafc; /* slate-50 */
-      --border: #e2e8f0; /* slate-200 */
-      --accent: #111827; /* gray-900 */
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0b1120; /* navy-very-dark */
-        --fg: #e5e7eb; /* gray-200 */
-        --muted: #94a3b8; /* slate-400 */
-        --link: #38bdf8; /* sky-400 */
-        --card: #0f172a; /* slate-900 */
-        --border: #1f2937; /* gray-800 */
-        --accent: #f9fafb; /* gray-50 */
-      }
-    }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: var(--bg);
-      color: var(--fg);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    a { color: var(--link); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+        }
 
-    /* Header */
-    header { position: sticky; top: 0; backdrop-filter: saturate(180%) blur(8px); background: color-mix(in oklab, var(--bg), transparent 20%); border-bottom: 1px solid var(--border); }
-    .nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-    .brand { font-weight: 700; letter-spacing: 0.2px; }
-    .menu { display: flex; gap: 16px; }
+        header {
+            margin-bottom: 3rem;
+        }
 
-    /* Hero */
-    .hero { padding: 56px 0 32px; display: grid; gap: 16px; }
-    .hero h1 { font-size: clamp(28px, 6vw, 40px); line-height: 1.2; margin: 0; }
-    .hero p { margin: 0; color: var(--muted); font-size: 18px; }
-    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
-    .button { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 12px; text-decoration: none; font-weight: 600; }
-    .button.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-    .button:focus-visible { outline: 3px solid var(--link); outline-offset: 2px; }
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
 
-    /* Cards */
-    .grid { display: grid; gap: 16px; grid-template-columns: repeat(12, 1fr); }
-    .card { grid-column: span 12; border: 1px solid var(--border); background: var(--card); border-radius: 16px; padding: 16px; }
-    @media (min-width: 720px) {
-      .card.split { display: grid; grid-template-columns: 1.4fr 2fr; gap: 16px; align-items: start; }
-      .half { grid-column: span 6; }
-    }
-    .card h2, .card h3 { margin-top: 0; margin-bottom: 8px; }
-    .muted { color: var(--muted); }
-    ul.clean, ol.clean { list-style: none; padding: 0; margin: 0; }
-    ul.clean li { padding: 8px 0; border-top: 1px dashed var(--border); }
-    ul.clean li:first-child { border-top: 0; }
+        .tagline {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
 
-    /* Footer */
-    footer { margin-top: 48px; padding: 24px 0; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
-  </style>
+        section {
+            margin-bottom: 3rem;
+        }
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Dewang Gogte",
-    "url": "https://example.com",
-    "sameAs": [
-      "https://github.com/your-username",
-      "https://www.linkedin.com/in/your-username/"
-    ]
-  }
-  </script>
+        h2 {
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .links a {
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 2px;
+        }
+
+        .links a:hover {
+            border-color: var(--accent);
+            text-decoration: none;
+        }
+
+        .status {
+            display: inline-block;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 1.5rem;
+            padding: 0.5rem 0;
+            border-top: 1px solid var(--border);
+            width: 100%;
+        }
+
+        .status::before {
+            content: '●';
+            color: #4a9;
+            margin-right: 0.5rem;
+            font-size: 0.7rem;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="container nav">
-      <div class="brand">Dewang Gogte</div>
-      <nav class="menu" aria-label="Primary">
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#contact">Contact</a>
-      </nav>
+    <div class="container">
+        <header>
+            <h1>Dewang Gogte</h1>
+            <p class="tagline">Bangalore, India</p>
+        </header>
+
+        <section>
+            <h2>About</h2>
+            <p>
+                I work with startups — mostly on product, growth, and figuring out 
+                what actually moves the needle. I've done stints at places like 
+                American Express, Drip Capital, and a few early-stage companies where 
+                the job description was basically "whatever needs doing."
+            </p>
+            <p>
+                I studied biotech and AI at IIT Kharagpur, but honestly learned more 
+                from shipping things and watching them break. These days I'm interested 
+                in how small teams make big decisions, and occasionally I 
+                <a href="https://instagram.com/dewangraphy">take photos</a> and make music.
+            </p>
+            <p class="status">Open to freelance, consulting, and part-time roles</p>
+        </section>
+
+        <section>
+            <h2>Links</h2>
+            <div class="links">
+                <a href="mailto:dewanggogte@gmail.com">Email</a>
+                <a href="https://linkedin.com/in/dewanggogte">LinkedIn</a>
+                <a href="https://instagram.com/dewangraphy">Instagram</a>
+                <a href="Dewang_Gogte_Resume.pdf">Resume</a>
+            </div>
+        </section>
     </div>
-  </header>
-
-  <main class="container">
-    <section class="hero" id="home">
-      <h1>Hello, I’m Dewang.</h1>
-      <p>Welcome to my corner of the internet. This is a simple, fast, and responsive one‑page site you can expand over time.</p>
-      <div class="actions">
-        <a class="button primary" href="#contact" aria-label="Contact Dewang">Get in touch</a>
-        <a class="button" href="/resume.pdf" download aria-label="Download Dewang's resume (PDF)">Resume (PDF)</a>
-      </div>
-    </section>
-
-    <section id="about" class="grid" aria-labelledby="about-heading">
-      <article class="card split">
-        <div>
-          <h2 id="about-heading">About</h2>
-          <p class="muted">Write a brief bio here—what you do, what you love building, and what you’re exploring next.</p>
-        </div>
-        <div>
-          <h3>Highlights</h3>
-          <ul class="clean">
-            <li>🔧 Area of focus — add a line.</li>
-            <li>🚀 Recent project — add a line.</li>
-            <li>🧠 Interests — add a line.</li>
-          </ul>
-        </div>
-      </article>
-    </section>
-
-    <section id="projects" class="grid" aria-labelledby="projects-heading">
-      <article class="card">
-        <h2 id="projects-heading">Projects</h2>
-        <ul class="clean">
-          <li>
-            <strong>Project One</strong> — a short description with a <a href="#">demo</a> or <a href="#">code</a>.
-          </li>
-          <li>
-            <strong>Project Two</strong> — what it does and why it’s neat.
-          </li>
-          <li>
-            <strong>Project Three</strong> — add links as you like.
-          </li>
-        </ul>
-      </article>
-    </section>
-
-    <section id="contact" class="grid" aria-labelledby="contact-heading">
-      <article class="card">
-        <h2 id="contact-heading">Contact</h2>
-        <p>Best way to reach me is email. I read everything.</p>
-        <p>
-          <a class="button" href="mailto:dewanggogte@gmail.com" aria-label="Email Dewang">dewanggogte@gmail.com</a>
-          <a class="button" href="https://www.linkedin.com/in/dewanggogte/" target="_blank" rel="noopener">LinkedIn</a>
-          <a class="button" href="https://github.com/dewanggogte" target="_blank" rel="noopener">GitHub</a>
-        </p>
-      </article>
-    </section>
-
-    <footer>
-      <div class="container">
-        © <span id="year"></span> Dewang Gogte. All rights reserved.
-      </div>
-    </footer>
-  </main>
-
-  <script>
-    // Update copyright year automatically
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
 </body>
 </html>
