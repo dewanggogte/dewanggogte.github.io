@@ -1,0 +1,252 @@
+---
+interface Props {
+    title: string;
+    date: string;
+    type: 'article' | 'weekly-review';
+}
+
+const { title, date, type } = Astro.props.frontmatter || Astro.props;
+const typeLabel = type === 'weekly-review' ? 'Weekly Review' : 'Article';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title} - Dewang Gogte</title>
+    <meta name="description" content={title}>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-row">
+                <h1><a href="/" class="home-link">Dewang Gogte</a></h1>
+                <a href="/blog" class="back-link">&larr; Back to Blog</a>
+            </div>
+            <span class="post-type">{typeLabel}</span>
+            <p class="post-title">{title}</p>
+            <p class="post-date">{date}</p>
+        </header>
+
+        <article>
+            <slot />
+        </article>
+
+        <section class="links-section">
+            <div class="footer-row">
+                <a href="/Dewang_Gogte_Resume.pdf" target="_blank" rel="noopener noreferrer">Resume</a>
+                <a href="/">Home</a>
+                <span class="elsewhere">
+                    <span class="elsewhere-label">Elsewhere:</span>
+                    <a href="mailto:dewanggogte@gmail.com">Email</a>
+                    <a href="https://linkedin.com/in/dewanggogte" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    <a href="https://instagram.com/dewangraphy" target="_blank" rel="noopener noreferrer">Instagram</a>
+                </span>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
+
+<style is:global>
+    :root {
+        --bg: #fdfcfb;
+        --text: #2c2c2c;
+        --text-light: #666;
+        --accent: #b85a3b;
+        --border: #e8e6e3;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Source Serif 4', Georgia, serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 18px;
+        line-height: 1.7;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+    }
+
+    a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    header {
+        margin-bottom: 2.5rem;
+    }
+
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 0.5rem;
+    }
+
+    .header-row h1 {
+        margin-bottom: 0;
+    }
+
+    .back-link {
+        font-size: 0.85rem;
+        color: var(--text-light);
+    }
+
+    .back-link:hover {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .post-type {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-light);
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .home-link {
+        color: var(--text);
+    }
+
+    .home-link:hover {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .post-title {
+        font-size: 1.3rem;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .post-date {
+        color: var(--text-light);
+        font-size: 0.9rem;
+    }
+
+    article {
+        margin-top: 2rem;
+    }
+
+    article p {
+        margin-bottom: 1.25rem;
+    }
+
+    article h2 {
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin-top: 2rem;
+        margin-bottom: 0.75rem;
+    }
+
+    article h3 {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    article ul, article ol {
+        margin-bottom: 1.25rem;
+        padding-left: 1.5rem;
+    }
+
+    article li {
+        margin-bottom: 0.5rem;
+    }
+
+    article blockquote {
+        border-left: 2px solid var(--border);
+        padding-left: 1rem;
+        margin: 1.5rem 0;
+        color: var(--text-light);
+        font-style: italic;
+    }
+
+    .links-section {
+        padding-top: 1.5rem;
+        margin-top: 2rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .footer-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: center;
+        gap: 2rem;
+    }
+
+    .footer-row > a {
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-light);
+    }
+
+    .footer-row > a:hover {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+
+    .elsewhere {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+
+    .elsewhere-label {
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-light);
+    }
+
+    .elsewhere a {
+        font-size: 0.7rem;
+        color: var(--text-light);
+    }
+
+    .elsewhere a:hover {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .elsewhere a::before {
+        content: '•';
+        margin-right: 0.5rem;
+        color: var(--text-light);
+    }
+</style>

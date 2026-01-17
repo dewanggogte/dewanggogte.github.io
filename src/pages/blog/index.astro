@@ -1,0 +1,190 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const allPosts = await Astro.glob('./**/*.mdx');
+
+const articles = allPosts.filter(post => post.frontmatter.type === 'article');
+const weeklyReviews = allPosts.filter(post => post.frontmatter.type === 'weekly-review');
+
+// Sort by date descending
+const sortByDate = (a: any, b: any) =>
+    new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime();
+
+articles.sort(sortByDate);
+weeklyReviews.sort(sortByDate);
+---
+
+<Base title="Blog - Dewang Gogte">
+    <header>
+        <h1><a href="/" class="home-link">Dewang Gogte</a></h1>
+    </header>
+
+    {weeklyReviews.length > 0 && (
+        <section class="blog-section">
+            <h2>Weekly Reviews</h2>
+            <ul class="post-list">
+                {weeklyReviews.map(post => (
+                    <li>
+                        <a href={post.url}>{post.frontmatter.title}</a>
+                        <span class="post-date">{post.frontmatter.date}</span>
+                    </li>
+                ))}
+            </ul>
+        </section>
+    )}
+
+    {articles.length > 0 && (
+        <section class="blog-section">
+            <h2>Articles</h2>
+            <ul class="post-list">
+                {articles.map(post => (
+                    <li>
+                        <a href={post.url}>{post.frontmatter.title}</a>
+                        <span class="post-date">{post.frontmatter.date}</span>
+                    </li>
+                ))}
+            </ul>
+        </section>
+    )}
+
+    {allPosts.length === 0 && (
+        <p class="empty-state">No posts yet. Check back soon!</p>
+    )}
+
+    <section class="links-section">
+        <div class="footer-row">
+            <a href="/Dewang_Gogte_Resume.pdf" target="_blank" rel="noopener noreferrer">Resume</a>
+            <a href="/">Home</a>
+            <span class="elsewhere">
+                <span class="elsewhere-label">Elsewhere:</span>
+                <a href="mailto:dewanggogte@gmail.com">Email</a>
+                <a href="https://linkedin.com/in/dewanggogte" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                <a href="https://instagram.com/dewangraphy" target="_blank" rel="noopener noreferrer">Instagram</a>
+            </span>
+        </div>
+    </section>
+</Base>
+
+<style>
+    .home-link {
+        color: var(--text);
+    }
+
+    .home-link:hover {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .page-title {
+        color: var(--text-light);
+        font-size: 1rem;
+        margin-top: 0.25rem;
+    }
+
+    .blog-section {
+        margin-top: 2.5rem;
+    }
+
+    .blog-section h2 {
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-light);
+        margin-bottom: 1rem;
+    }
+
+    .post-list {
+        list-style: none;
+    }
+
+    .post-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .post-list li:last-child {
+        border-bottom: none;
+    }
+
+    .post-list a {
+        color: var(--text);
+    }
+
+    .post-list a:hover {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .post-date {
+        font-size: 0.85rem;
+        color: var(--text-light);
+    }
+
+    .empty-state {
+        color: var(--text-light);
+        margin-top: 2rem;
+    }
+
+    .links-section {
+        padding-top: 1.5rem;
+        margin-top: 2rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .footer-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: center;
+        gap: 2rem;
+    }
+
+    .footer-row > a {
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-light);
+    }
+
+    .footer-row > a:hover {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+
+    .elsewhere {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+
+    .elsewhere-label {
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-light);
+    }
+
+    .elsewhere a {
+        font-size: 0.7rem;
+        color: var(--text-light);
+    }
+
+    .elsewhere a:hover {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .elsewhere a::before {
+        content: '•';
+        margin-right: 0.5rem;
+        color: var(--text-light);
+    }
+</style>
