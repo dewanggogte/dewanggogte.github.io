@@ -2,11 +2,16 @@
 interface Props {
     title: string;
     date: string;
-    type: 'article' | 'weekly-review';
+    type: 'article' | 'weekly-review' | 'til';
 }
 
 const { title, date, type } = Astro.props.frontmatter || Astro.props;
-const typeLabel = type === 'weekly-review' ? 'Weekly Review' : 'Article';
+const typeLabels: Record<string, string> = {
+    'weekly-review': 'Weekly Review',
+    'article': 'Article',
+    'til': 'T.I.L.'
+};
+const typeLabel = typeLabels[type] || 'Article';
 ---
 
 <!DOCTYPE html>

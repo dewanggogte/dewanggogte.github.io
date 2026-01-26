@@ -5,6 +5,7 @@ const allPosts = await Astro.glob('./**/*.mdx');
 
 const articles = allPosts.filter(post => post.frontmatter.type === 'article');
 const weeklyReviews = allPosts.filter(post => post.frontmatter.type === 'weekly-review');
+const tils = allPosts.filter(post => post.frontmatter.type === 'til');
 
 // Sort by date descending
 const sortByDate = (a: any, b: any) =>
@@ -12,6 +13,7 @@ const sortByDate = (a: any, b: any) =>
 
 articles.sort(sortByDate);
 weeklyReviews.sort(sortByDate);
+tils.sort(sortByDate);
 ---
 
 <Base title="Blog - Dewang Gogte">
@@ -38,6 +40,20 @@ weeklyReviews.sort(sortByDate);
             <h2>Articles</h2>
             <ul class="post-list">
                 {articles.map(post => (
+                    <li>
+                        <a href={post.url}>{post.frontmatter.title}</a>
+                        <span class="post-date">{post.frontmatter.date}</span>
+                    </li>
+                ))}
+            </ul>
+        </section>
+    )}
+
+    {tils.length > 0 && (
+        <section class="blog-section">
+            <h2>T.I.L.</h2>
+            <ul class="post-list">
+                {tils.map(post => (
                     <li>
                         <a href={post.url}>{post.frontmatter.title}</a>
                         <span class="post-date">{post.frontmatter.date}</span>
