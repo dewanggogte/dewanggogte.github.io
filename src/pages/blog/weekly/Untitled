@@ -1,6 +1,0 @@
----
-layout: ../../../layouts/BlogPost.astro
-title: "Week 3"
-date: "January 17, 2026"
-type: weekly-review
----
