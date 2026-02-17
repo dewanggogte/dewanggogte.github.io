@@ -1,0 +1,220 @@
+---
+import Base from '../../layouts/Base.astro';
+import Footer from '../../components/Footer.astro';
+
+const projects = [
+    {
+        name: "dewanggogte.com",
+        description: "Minimal personal website built with Astro and MDX. Zero JavaScript, static, content-first.",
+        tags: ["astro", "mdx", "web"],
+        color: "#e8d3d3",
+        thumb: "/projects/dewanggogte-com.svg",
+        link: "/blog/projects/building-this-site"
+    },
+    {
+        name: "CallKaro",
+        description: "Offline voice AI agent that calls local vendors and collects competitive quotes for consumer electronics.",
+        tags: ["voice-ai", "python", "livekit"],
+        color: "#d3dde8",
+        thumb: "/projects/callkaro.svg",
+        link: "https://callkaro.dewanggogte.com"
+    }
+];
+---
+
+<Base title="Projects - Dewang Gogte">
+    <header>
+        <h1><a href="/" class="home-link">Dewang Gogte</a></h1>
+        <p class="page-subtitle">Projects</p>
+    </header>
+
+    <section class="projects-grid">
+        {projects.map(project => (
+            <a href={project.link} class="grid-card">
+                <div class="card-thumb" style={`background-color: ${project.color};`}>
+                    <img src={project.thumb} alt={project.name} class="thumb-img" />
+                </div>
+                <div class="card-body">
+                    <span class="card-title">{project.name}</span>
+                    <p class="card-desc">{project.description}</p>
+                    <div class="card-tags">
+                        {project.tags.map(tag => (
+                            <span class="chip">{tag}</span>
+                        ))}
+                    </div>
+                </div>
+            </a>
+        ))}
+    </section>
+
+    <p class="disclaimer">Some projects are hosted on free-tier infrastructure. Expect up to a 30-second cold start on first load, and the UI may look different from what's described here — these are works in progress.</p>
+
+    <Footer links={[
+        { label: "Resume", href: "/Dewang_2026.pdf", external: true },
+        { label: "Home", href: "/" },
+        { label: "Blog", href: "/blog" }
+    ]} />
+</Base>
+
+<style>
+    .home-link { color: var(--text); }
+    .home-link:hover { color: var(--accent); text-decoration: none; }
+
+    .page-subtitle {
+        color: var(--text-light);
+        font-size: 1rem;
+        margin-top: 0.25rem;
+    }
+
+    .projects-grid {
+        margin-top: 2.5rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+    }
+
+    .grid-card {
+        display: block;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+        color: var(--text);
+        transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .grid-card:hover {
+        border-color: var(--accent);
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    .card-thumb {
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .thumb-img {
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .card-title {
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .card-desc {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        margin-top: 0.3rem;
+        line-height: 1.45;
+    }
+
+    .card-tags {
+        margin-top: 0.6rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+    }
+
+    .chip {
+        font-size: 0.65rem;
+        padding: 0.1rem 0.4rem;
+        border-radius: 3px;
+        background: #f0eee9;
+        color: var(--text-light);
+    }
+
+    .disclaimer {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        margin-top: 2rem;
+        line-height: 1.5;
+    }
+
+    .links-section {
+        padding-top: 1.5rem;
+        margin-top: 2.5rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .footer-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: center;
+        gap: 2rem;
+    }
+
+    .footer-row > a {
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-light);
+    }
+
+    .footer-row > a:hover {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .elsewhere {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .elsewhere-label {
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-light);
+    }
+
+    .elsewhere a {
+        font-size: 0.7rem;
+        color: var(--text-light);
+    }
+
+    .elsewhere a:hover {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .elsewhere a::before {
+        content: '•';
+        margin-right: 0.5rem;
+        color: var(--text-light);
+    }
+
+    .elsewhere a.icon-link {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 0.5rem;
+    }
+
+    .elsewhere a.icon-link::before {
+        content: none;
+    }
+
+    .elsewhere a.icon-link svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    @media (max-width: 500px) {
+        .projects-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

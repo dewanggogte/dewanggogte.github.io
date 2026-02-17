@@ -1,0 +1,39 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Building This Site"
+date: "February 17, 2026"
+type: project
+description: "How I built dewanggogte.com — a static, zero-JavaScript personal site using Astro and MDX."
+titleLinkText: "This Site"
+titleLinkUrl: https://dewanggogte.com
+---
+
+This is my personal website — a place to write, share projects, and have a corner of the internet that's mine. I wanted a simple site that loads fast, looks clean, and gets out of the way of the content. No analytics, no cookies, no JavaScript. Just words on a page.
+
+## Why Astro
+
+I looked at Next.js, Hugo, and plain HTML before landing on Astro. The deciding factor was MDX support with zero client-side JavaScript by default. I write in Markdown, Astro compiles it to static HTML, and the browser gets nothing it doesn't need.
+
+## Tech
+
+- **Astro 5** with MDX for content pages
+- **Source Serif 4** for typography
+- Static site, deployed to **GitHub Pages**
+- Zero client-side JavaScript
+
+## Design
+
+The design is content-first: a warm color palette ( <span style="display: inline-block; width: 32px; height: 14px; border-radius: 4px; background: #fdfcfb; border: 1px solid #e8e6e3; vertical-align: middle;"></span> `#fdfcfb` background, <span style="display: inline-block; width: 32px; height: 14px; border-radius: 4px; background: #b85a3b; vertical-align: middle;"></span> `#b85a3b` accent), generous line height, and a single-column layout capped at 800px. No nav bar — just contextual links and a consistent footer.
+
+Every design decision started with "do I actually need this?" No dark mode toggle — the warm palette works. No JavaScript — the content doesn't require interactivity. The result is a site that loads in under a second on any connection and scores 100 on Lighthouse across the board.
+
+## What's next
+
+- More writing — articles, weekly reviews, and short TIL notes
+- Project pages for things I'm building
+- Maybe photos, eventually
+
+## Links
+
+- [Live site](https://dewanggogte.com)
+- [Source on GitHub](https://github.com/dewanggogte/dewanggogte.github.io)

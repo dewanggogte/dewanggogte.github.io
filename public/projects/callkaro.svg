@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 160">
+  <!-- Phone handset -->
+  <path d="M170 50 C170 50, 160 52, 158 60 L152 90 C150 98, 155 104, 160 106 L168 110 C172 112, 176 110, 178 106 L182 96 C184 92, 182 88, 178 86 L174 84 C172 83, 170 84, 169 86 L167 92 C166 94, 164 94, 163 92 L160 72 C159.5 70, 161 69, 163 69.5 L167 70.5 C169 71, 171 70, 172 68 L175 58 C177 54, 175 50, 171 49 Z" fill="none" stroke="#8a9cb8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Sound waves -->
+  <path d="M192 65 C198 70, 198 85, 192 90" fill="none" stroke="#8a9cb8" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/>
+  <path d="M200 58 C210 66, 210 89, 200 97" fill="none" stroke="#8a9cb8" stroke-width="1.8" stroke-linecap="round" opacity="0.5"/>
+  <path d="M208 51 C222 62, 222 93, 208 104" fill="none" stroke="#8a9cb8" stroke-width="1.8" stroke-linecap="round" opacity="0.3"/>
+  <!-- Data dots representing structured output -->
+  <rect x="228" y="60" width="6" height="6" rx="1" fill="#8a9cb8" opacity="0.5"/>
+  <rect x="238" y="60" width="30" height="6" rx="1" fill="#8a9cb8" opacity="0.3"/>
+  <rect x="228" y="72" width="6" height="6" rx="1" fill="#8a9cb8" opacity="0.5"/>
+  <rect x="238" y="72" width="22" height="6" rx="1" fill="#8a9cb8" opacity="0.3"/>
+  <rect x="228" y="84" width="6" height="6" rx="1" fill="#8a9cb8" opacity="0.5"/>
+  <rect x="238" y="84" width="26" height="6" rx="1" fill="#8a9cb8" opacity="0.3"/>
+  <rect x="228" y="96" width="6" height="6" rx="1" fill="#8a9cb8" opacity="0.5"/>
+  <rect x="238" y="96" width="18" height="6" rx="1" fill="#8a9cb8" opacity="0.3"/>
+</svg>

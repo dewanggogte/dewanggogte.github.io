@@ -1,0 +1,52 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Building CallKaro"
+date: "February 17, 2026"
+type: project
+description: "An offline voice AI agent that calls local vendors in Hindi and collects competitive quotes for consumer electronics."
+titleLinkText: "CallKaro"
+titleLinkUrl: https://callkaro.dewanggogte.com
+---
+
+CallKaro is an offline voice AI agent that calls local vendors and collects competitive quotes for consumer electronics.
+
+## The problem
+
+Online prices for consumer electronics aren't always the best deal — especially for large-ticket items like ACs, refrigerators, and washing machines, or niche hardware that local dealers stock at competitive rates. But calling multiple vendors, negotiating in Hindi or Hinglish, and comparing quotes is tedious and time-consuming.
+
+## What CallKaro does
+
+CallKaro automates the discovery process. You tell it what you're looking for, and it calls local vendors on your behalf — speaking Hindi/Hinglish — to collect pricing, availability, and deal information. The result is a structured set of competitive quotes you can compare without picking up the phone.
+
+## How it works
+
+1. **Call initiation** — CallKaro places SIP calls to local vendor phone numbers
+2. **Voice conversation** — A Hindi/Hinglish voice AI agent asks about product pricing and availability
+3. **Speech processing** — Sarvam AI handles STT (speech-to-text) and TTS (text-to-speech) for natural Hindi conversation
+4. **Quote extraction** — The LLM extracts structured pricing data from the conversation
+5. **Results** — You get a clean comparison of quotes across vendors
+
+## Tech stack
+
+- **Python** — core application
+- **LiveKit** — WebRTC/SIP infrastructure for real-time voice
+- **Sarvam AI** — Hindi STT and TTS
+- **Claude Haiku / Qwen3** — LLM for conversation and data extraction
+- **SIP trunking** — for placing actual phone calls
+
+## Key design decisions
+
+- **Offline-first** — designed to work with local SIP infrastructure, no cloud dependency for the call path
+- **Romanized Hindi output** — transcripts and extracted data use Romanized Hindi for easier programmatic handling
+- **Deterministic number conversion** — prices mentioned verbally in Hindi are reliably converted to numeric values
+
+## Where it's headed
+
+- **Multi-turn negotiation** — going back to vendors with competing quotes
+- **Broader categories** — beyond electronics to furniture, appliances, building materials
+- **User-facing interface** — making it easy for anyone to request quotes without technical setup
+
+## Links
+
+- [Demo](https://callkaro.dewanggogte.com)
+- [Source on GitHub](https://github.com/dewanggogte/hyperlocal-discovery)
