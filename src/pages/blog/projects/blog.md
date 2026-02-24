@@ -1,13 +1,3 @@
----
-layout: ../../../layouts/BlogPost.astro
-title: "CallKaro"
-date: "February 17, 2026"
-type: project
-description: "An offline voice AI agent that calls local vendors in Hindi and collects competitive quotes for consumer electronics."
-titleLinkText: "CallKaro"
-titleLinkUrl: https://callkaro.dewanggogte.com
----
-
 # Building CallKaro: A Voice AI Agent That Calls Indian Shops and Negotiates Prices in Hindi
 
 *How we built a full-stack voice pipeline that researches products, finds local stores, calls them over the phone, haggles in Romanized Hindi, and compares quotes -- all autonomously.*
