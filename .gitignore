@@ -27,3 +27,6 @@ yarn-error.log*
 # Optional caches
 .npm
 .eslintcache
+
+# Writing style reference (private)
+writing_style.md

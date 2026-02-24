@@ -1,0 +1,44 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Setting Up Custom Domain Email"
+date: "February 24, 2026"
+type: til
+description: "Get a professional email like hello@yourname.com for free using Zoho Mail. No technical skills required."
+---
+
+If you own a domain, you can get an email address like `hello@yourname.com` for free. I use Zoho Mail because their free plan gives you 5 email accounts with 5GB each, enough for a personal email.
+
+## Why bother
+
+A custom domain email looks more professional than a Gmail address. It also protects you if you ever switch email providers; the address stays the same because you control the domain.
+
+## What you need
+
+1. A domain name you own (the same one as your website works great)
+2. Access to your domain's DNS settings (wherever you bought the domain)
+3. An LLM to walk you through it
+
+## How to set it up
+
+Go to [zoho.com/mail](https://www.zoho.com/mail/) and sign up for the free plan with your domain.
+
+Then open Claude, ChatGPT, or Gemini and say something like:
+
+> "I just signed up for Zoho Mail's free plan with my domain [yourdomain.com]. My domain is registered at [your registrar]. Walk me through verifying the domain and setting up all the DNS records I need -- MX, SPF, and DKIM."
+
+The LLM will explain what each record does and tell you exactly what to type into your DNS settings. The short version:
+
+- **MX records** tell the internet "deliver email for this domain to Zoho's servers"
+- **SPF record** tells other email servers "Zoho is authorized to send email on my behalf" (so your emails don't land in spam)
+- **DKIM record** adds a cryptographic signature to your outgoing emails (another anti-spam measure)
+
+
+## The wait
+
+After adding the DNS records, it can take anywhere from a few minutes to 48 hours for everything to propagate. Usually it's under an hour. Zoho's setup wizard has a "verify" button you can keep clicking until it goes green.
+
+Once verified, you can send and receive email through Zoho's web interface or their mobile app.
+
+## What it costs
+
+Nothing. Zoho Mail's free plan is genuinely free -- no credit card, no trial period. The only cost is your domain name, which you probably already have if you followed the website hosting TIL.

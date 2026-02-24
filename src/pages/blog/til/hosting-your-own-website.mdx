@@ -1,0 +1,56 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Hosting Your Own Website"
+date: "February 24, 2026"
+type: til
+description: "You can have your own website live in under an hour, for free, with zero technical background. Here's the playbook."
+---
+
+I have always wanted a website of my own. I never got around to doing to doing it because I thought it was a lot of work. But as it turns out, you can have your own website live in under an hour, for free, with zero technical background. I'm not exaggerating.
+
+## What you need
+
+1. A GitHub account (free)
+2. A domain name (₹1000/year from Namecheap, Google Domains, Cloudflare, etc.)
+3. An LLM you can chat with (Claude, ChatGPT, Gemini -- any of them work)
+
+That's it.
+
+## The idea
+
+So a website is basically just a folder of files. A folder on your computer is not that different compared to a website on the internet.
+But to get files from your computer onto the internet, you need to do three things:
+
+1. **Something to turn your writing into a website** : this is called a static site generator. I use Astro, but there are dozens. It takes your text and creates corresponding HTML files that browsers can read.
+
+2. **Somewhere to serve those files from** : GitHub Pages hosts them for free. Every time you update your site, it automatically rebuilds and publishes.
+
+3. **A domain name pointing to it** : so people can visit `yourname.com` instead of `yourusername.github.io`.
+
+## How to actually do it
+
+Open Claude, ChatGPT, or Gemini and tell it something like:
+
+> "I want to set up a personal website using Astro and GitHub Pages. I have a GitHub account and a domain from [your registrar]. Walk me through the entire setup step by step, starting from creating the repo."
+
+The LLM will walk you through every click, every command, every setting. When you get stuck, just paste the error message back into the chat. When you don't understand a step, ask it to explain.
+
+A few things you'll need to do (the LLM will help with all of this):
+
+- Create an Astro project and understand the file structure
+- Set up a GitHub repo with the right name (`username.github.io` -- GitHub won't let you use any other name for your repo)
+- A deploy workflow so your site auto-publishes when you push changes
+- Point your domain's DNS to GitHub Pages
+- Enable free HTTPS
+
+The whole process is a conversation. You don't need to memorize anything -- just keep the chat open and follow along.
+
+
+## What it costs
+
+- Hosting: free (GitHub Pages)
+- Domain: ₹800-1000/year
+- SSL/HTTPS: free (GitHub provisions it automatically)
+- LLM help: free tier of any model is enough
+
+Your own corner of the internet for the price of a domain name.

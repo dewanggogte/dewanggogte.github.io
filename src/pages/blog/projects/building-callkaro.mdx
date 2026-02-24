@@ -12,34 +12,34 @@ titleLinkUrl: https://callkaro.nikamma.in
 
 *A full-stack voice pipeline that researches products, finds local stores, calls them in Hindi, negotiates prices, and compares quotes — autonomously.*
 
-In India, if you want to buy an air conditioner, a washing machine, or a refrigerator, you do not go to a website and click "Add to Cart." You call three or four local dealers, ask for their best price, mention that the shop down the road offered you less, and eventually settle on a number. This ritual plays out millions of times a day across the country, entirely over the phone, entirely in Hindi.
+We spend a lot of time buying electronics in India. You know how it works -- you don't go to a website and click "Add to Cart." You call three or four local dealers, ask for their best price, mention that the shop down the road offered you less, and eventually settle on a number. This ritual plays out millions of times a day across the country, entirely over the phone, entirely in Hindi.
 
-I built CallKaro to automate that ritual. It is a voice AI agent that calls real shops, speaks Hindi, asks about prices, pushes back gently on high quotes, and compares results across stores. This post covers how it works, what broke along the way, and the technical decisions that made it possible.
+I wanted to see if I could get an AI to do that. CallKaro is what came out of it -- a voice agent that calls real shops, speaks Hindi, asks about prices, pushes back gently on high quotes, and compares results across stores.
 
 ## Why Indian Electronics Prices Don't Exist Online
 
-Three realities define consumer electronics retail in India:
+Three things are true about buying electronics in India:
 
-**Local dealers do not list prices online**<br/>
-Walk into any appliance market -- Lajpat Rai in Delhi, SP Road in Bangalore, Lamington Road in Mumbai -- and you will find hundreds of shops. Almost none of them publish prices. The price depends on who is asking, what day it is, and how much inventory they have.
+**Local dealers don't list prices online**<br/>
+Walk into any appliance market -- Lajpat Rai in Delhi, SP Road in Bangalore, Lamington Road in Mumbai -- and you'll find hundreds of shops. Almost none of them publish prices. The price depends on who's asking, what day it is, and how much inventory they have.
 
 **Negotiation is expected**<br/>
-The first price a shopkeeper quotes is never the final price. Buyers are expected to push back. Mentioning a competitor's quote or simply saying "thoda zyada lag raha hai" (seems a bit high) can shave thousands of rupees off.
+The first price a shopkeeper quotes is never the final price. You're expected to push back. Mentioning a competitor's quote or simply saying "thoda zyada lag raha hai" can shave thousands of rupees off.
 
 **Hindi-first market**<br/>
-Over 600 million people in India speak Hindi. In Tier 2 and Tier 3 cities, most shopkeepers conduct business exclusively in Hindi. A price enquiry system that only works in English misses the majority of the market.
+Over 600 million people in India speak Hindi. In Tier 2 and Tier 3 cities, most shopkeepers do business exclusively in Hindi. Anything that only works in English misses the majority of the market.
 
 CallKaro addresses all three: it makes real phone calls, negotiates in natural Hindi, and aggregates results across multiple shops into a structured comparison.
 
 ## Five Stages: From "I Want an AC" to a Price Comparison
 
-The system is a five-stage pipeline. A user says what they want to buy and where they live. CallKaro researches the product, finds nearby stores, calls each one, and presents a ranked comparison.
+The whole thing is a five-stage pipeline. You say what you want to buy and where you live. CallKaro researches the product, finds nearby stores, calls each one, and gives you a ranked comparison.
 
 **Stage 1: Intake**<br/>
-An LLM extracts structured requirements from natural language -- product type, capacity, budget, location, brand preferences.
+An LLM pulls out what you actually need from what you type -- product type, capacity, budget, location, brand preferences.
 
 **Stage 2: Research**<br/>
-Web search for current market prices, dealer margins, seasonal pricing, and negotiation tactics. This intelligence gets injected into the voice agent's system prompt so it can push back credibly.
+The LLM searches the web for current market prices, dealer margins, seasonal pricing, and negotiation tactics. All of this gets injected into the voice agent's prompt so it knows what a fair price looks like and can push back credibly.
 
 **Stage 3: Store Discovery**<br/>
 Google Maps scraping and web search find nearby stores, phone numbers, ratings, and reviews.
@@ -52,7 +52,7 @@ Transcripts are fed to an LLM that extracts structured data and ranks stores by 
 
 ## How the Voice Pipeline Turns Phone Audio Into Hindi Conversation
 
-Here is the signal flow for a single conversational turn:
+This is where the most interesting engineering lives. Here's the signal flow for a single conversational turn:
 
 **VAD (Silero)**<br/>
 Detects when someone is speaking. I tuned `min_speech_duration` to 80ms and `min_silence_duration` to 800ms so the agent waits a beat before assuming the shopkeeper has finished.
@@ -64,21 +64,23 @@ Converts Hindi speech to English-transliterated text -- "Adtees hazaar ka hai" r
 Receives the shopkeeper's transcribed speech and generates the next response in Romanized Hindi.
 
 **Normalization Layer**<br/>
-Sits between the LLM and TTS. Handles number-to-Hindi-word conversion, Devanagari transliteration, action marker stripping, and spacing fixes. This is where most of the bugs lived.
+Sits between the LLM and TTS. Handles number-to-Hindi-word conversion, Devanagari transliteration, action marker stripping, and spacing fixes. Most of the bugs I'll talk about below lived here.
 
 **TTS (Sarvam bulbul:v3)**<br/>
 Converts Romanized Hindi text to natural-sounding Hindi speech. The "shubh" voice at 8kHz for telephony, 16kHz for browser sessions.
 
 **Turn Detection**<br/>
-A transformer-based model that predicts end-of-utterance using conversation context, running on top of VAD signals. Critical for Hindi, where pauses mid-sentence are common.
+A transformer-based model that predicts when someone's done talking, running on top of VAD signals. This is critical for Hindi -- people pause mid-sentence all the time, and you don't want the agent jumping in too early.
 
-## Six Bugs I Hit While Making an AI Speak Hindi on the Phone
+## Bugs I ran into
 
 ### Streaming Broke Hindi Numbers: "28" + "000" Became "28" and "Zero"
 
-LLM responses arrive as token chunks. The number "28000" might arrive as `"28"` and `"000"`. Normalizing each chunk independently produces "attaaees" (28) followed by "zero" instead of "attaaees hazaar" (28,000).
+The LLM outputs prices as digits: "38000". The normalization layer converts this to Hindi words for TTS: "adtees hazaar." Simple enough -- until streaming broke it.
 
-The fix is a buffered normalizer that holds trailing digits until the next chunk arrives:
+LLM responses arrive as token chunks. The number "28000" might arrive as `"28"` and `"000"`. If you normalize each chunk independently, you get "attaaees" (28) followed by "zero" instead of "attaaees hazaar" (28,000).
+
+The fix was a buffered normalizer that holds trailing digits until the next chunk arrives:
 
 ```python
 class _NumberBufferedNormalizer:
@@ -106,40 +108,43 @@ Hindi number conversion covers every number from 0 to 99 with individual words (
 
 ### The LLM Would Randomly Switch to English Mid-Call
 
-Occasionally the LLM would respond in fluent English instead of Romanized Hindi, crashing the Hindi TTS. I built a heuristic detector that checks for the presence of common Hindi marker words (`achha`, `ji`, `haan`, `theek`, `kya`, `hai`, etc.). If a response longer than 20 characters contains none of them, it is flagged as a character break and a canned Hindi fallback is used instead.
+Every now and then, the LLM would just... respond in fluent English. Mid-call. The Hindi TTS would crash because it doesn't know what to do with English text.
 
-### Background Noise Transcribed as "Table" and "The" Triggered False Replies
+I built a heuristic detector that checks for common Hindi marker words -- `achha`, `ji`, `haan`, `theek`, `kya`, `hai`, etc. If a response longer than 20 characters has none of them, it gets flagged as a character break and a canned Hindi fallback is used instead.
 
-The Sarvam STT model would sometimes transcribe silence, hold music, or line noise as random English words -- "table," "the," "and" -- triggering the LLM to respond to phantom input. Single-word transcripts matching a known set of common STT artifacts get flagged as garbage and ignored.
+### Background Noise Transcribed as random words
+
+Real phone calls have a lot of nothing -- silence, hold music, background chatter, line noise. The Sarvam STT model would sometimes transcribe these as random English words like "table," "the," "and" -- and the LLM would try to respond to them. Single-word transcripts matching a known set of common STT artifacts now get flagged as garbage and ignored.
 
 ### Hindi Script Characters Leaked Into Latin-Only TTS and Crashed It
 
-Despite explicit instructions to output only Romanized Hindi, the LLM would occasionally leak Devanagari characters. A fast single-pass transliterator detects and converts any Devanagari to its Romanized equivalent, handling consonant-matra combinations correctly.
+Despite explicit instructions to output only Romanized Hindi, the LLM would occasionally leak Devanagari characters. Even a single one could mess up the TTS. So I added a fast single-pass transliterator as a safety net -- it detects any Devanagari and converts it to Romanized equivalent, handling consonant-matra combinations correctly.
 
-### The Agent Said Hello Twice Because the LLM Forgot It Already Spoke
-
-The agent speaks a greeting when joining a call, which is added to the chat context so the LLM sees it as its own first message. The problem: the LLM would then generate the exact same greeting again. The fix was a NOTE injected into the system prompt with the exact greeting text, telling the LLM to continue from the shopkeeper's response instead of re-greeting.
 
 ### Stripping Whitespace Killed Natural Pauses in Speech
 
-The Sarvam TTS engine uses whitespace patterns to split text into sentences for prosody. When the normalization layer called `.strip()` on LLM output chunks, it removed leading spaces that acted as sentence boundary signals, producing unnatural run-together speech. The fix: preserve all whitespace from LLM tokens through the entire pipeline.
+This one was subtle. The Sarvam TTS engine uses whitespace to figure out where sentences end for natural pauses. When the normalization layer called `.strip()` on LLM output chunks, it removed leading spaces that the TTS was relying on as sentence boundaries. The result was unnatural, run-together speech with no pauses.
+
+The fix: don't call `.strip()`. Preserve all whitespace from LLM tokens through the entire pipeline.
 
 ## Sarvam STT/TTS: Monkey-Patches, Preprocessing, and Audio Settings
 
-**STT WebSocket reconnection**<br/>
-The Sarvam STT WebSocket connection dies after ~90 seconds because the LiveKit plugin's `_run()` method breaks on normal stream completion instead of reconnecting. I monkey-patched `SpeechStream._run` to loop and reconnect until the session truly ends.
+**STT WebSocket keeps dying after ~90 seconds**<br/>
+The LiveKit plugin's `_run()` method breaks on normal stream completion instead of reconnecting. I monkey-patched `SpeechStream._run` to loop and reconnect until the session actually ends.
 
-**TTS preprocessing**<br/>
-Sarvam's `enable_preprocessing=True` handles Romanized Hindi pronunciation internally, so no custom pronunciation dictionary is needed. I use the "shubh" male voice at 8kHz for telephony, 16kHz for browser testing.
+**TTS just works with Romanized Hindi**<br/>
+Sarvam's `enable_preprocessing=True` handles pronunciation internally, so I don't need a custom dictionary. The LLM outputs "achha" and bulbul:v3 pronounces it correctly. I use the "shubh" voice at 8kHz for telephony, 16kHz for browser testing.
 
-**Audio parameters**<br/>
-Phone calls run at 8kHz (standard telephony), browser sessions at 16kHz. The voice agent dynamically selects the sample rate based on whether a phone number is present in the call metadata.
+**Phone calls are 8kHz, browser is 16kHz**<br/>
+The voice agent picks the sample rate automatically based on whether there's a phone number in the call metadata.
 
-## Testing a Hindi Voice Agent: Simulated Shopkeepers and 188 Unit Tests
+## Adding Testing to the pipeline
+
+How do you test a voice agent that speaks Hindi and negotiates prices? I ended up with three layers.
 
 ### Layer 1: Shopkeeper Scenario Simulation
 
-I created 11 scripted shopkeeper scenarios derived from real call transcripts. Each scenario has a personality: cooperative shopkeepers who give prices directly, defensive ones who refuse to negotiate, evasive ones who go off-topic, ones who put you on hold, and ones who interrupt frequently. The test framework feeds shopkeeper lines one at a time into the actual LLM and validates the agent's response after each turn.
+I created 11 scripted shopkeeper scenarios from real call transcripts. Each one has a personality -- cooperative shopkeepers who give prices right away, defensive ones who refuse to negotiate, evasive ones who go off-topic, ones who put you on hold, ones who interrupt. The test framework feeds shopkeeper lines one at a time into the actual LLM and checks the agent's response after each turn.
 
 ### Layer 2: ConstraintChecker (8 Rules)
 
@@ -168,42 +173,59 @@ Full conversations are scored on five dimensions:
 
 The full test suite has 188 unit tests covering normalization, sanitization, transcript parsing, store ranking, prompt building, and constraint checking, plus 26 live API tests that hit the actual Sarvam and Anthropic endpoints.
 
-## A Real Call Transcript: 6 Turns, Score 0.91
+## A real call transcript
 
-A condensed transcript from a real call to a local AC dealer in Bangalore:
+Here's a trimmed transcript from a real call to a local electronics shop in Bangalore, asking about a 7 kg washing machine:
 
 ```
-Agent:  "Hello, yeh Pai Electronics hai? 1.5 ton split AC ke
-         baare mein poochna tha."
-Shop:   "Haan ji, Samsung hai. Boliye."
-Agent:  "Bhaisaab, dedh ton ka paanch star inverter split AC
-         ka best price kya doge?"
-Shop:   "Adtees hazaar ka hai."
-Agent:  "Achha, untaalees hazaar. Installation free hai kya?"
-Shop:   "Installation free hai, hum apne aadmi bhejte hain."
+Agent:  "Hello, yeh Prime Electronics hai? Saat kg fully
+         automatic top load washing machine ke baare mein
+         poochna tha."
+Shop:   "Haan, batao."
+Agent:  "Aapke paas saat kg fully automatic washing machine
+         kitne ka hai?"
+Shop:   "Baaees hazaar se start hai. LG, Whirlpool, Samsung,
+         Haier -- sab mil jaega."
+Agent:  "Achha, LG ka kya price hai?"
+Shop:   "LG ka attaaees hazaar."
+Agent:  "Achha, attaaees hazaar. Chaubees hazaar ke aas paas
+         de sakte ho?"
+Shop:   "24000 nahi ho paega bhaiya. 28000 fixed price hai."
 Agent:  "Theek hai. Warranty kitni milegi?"
-Shop:   "Ek saal company ki, aur compressor pe paanch saal."
-Agent:  "Achha ek saal. Main 2-3 shops se rate le raha hoon.
-         Thoda kam ho sakta hai?"
-Shop:   "Nahi bhai, best price hai yeh."
-Agent:  "Theek hai ji. Delivery kitne din mein hogi?"
-Shop:   "Do-teen din mein laga denge. Stock mein hai."
+Shop:   "LG mein das saal ki warranty hai."
+Agent:  "Achha, das saal. Installation aur delivery free hai?"
+Shop:   "Haan haan, wo free kar denge. Ek do din mein ho
+         jaegi delivery."
 Agent:  "Theek hai ji, bahut badiya. Dhanyavaad, namaste."
-         [end_call tool invoked]
 ```
 
-Overall score 0.91, all 8 constraints passed, topics covered: price, installation, warranty, delivery. On the 11-scenario test suite, the agent consistently scores above 0.85 with constraint compliance above 0.95.
+The agent asked about price, tried to negotiate down from ₹28,000 to ₹24,000 (got shut down), confirmed warranty, installation, and delivery -- all in 8 turns. Across the full 11-scenario test suite, the agent consistently scores above 0.85 with constraint compliance above 0.95.
 
-## Next: Smarter Negotiation, Voice A/B Tests, Product-Specific Flows
+## What it costs to run
 
-**Negotiation intelligence**<br/>
-Phase 2 will use researched dealer margins and online reference prices more aggressively during calls -- dynamically adjusting negotiation pressure based on how the quoted price compares to the market range.
+A single comparison involves 3-4 phone calls to different stores. Each call hits three paid APIs, so they calls have to be cheap to execute.
+
+**Sarvam AI (STT + TTS)**<br/>
+₹0.35/hour for speech-to-text, ₹0.18 per 10K characters for text-to-speech. A typical 2-3 minute call costs almost nothing. Sarvam gives you ₹1,000 in free credits on signup, which goes a long way.
+
+**Anthropic (Claude Haiku 4.5)**<br/>
+Haiku is the cheapest Claude model and it's more than good enough for this. Each call uses a few hundred tokens of input (system prompt + conversation history) and maybe 50-100 tokens of output per turn. A full comparison of 3-4 calls costs a few cents.
+
+**LiveKit (WebRTC + SIP)**<br/>
+LiveKit Cloud's free tier gives you 5,000 participant-minutes per month. Each call uses roughly 2-3 minutes, so you can do a lot of comparisons before hitting the limit. SIP trunking for the actual phone calls isn't set up since it is cumbersome for a side project, but that will add some cost to this equation.
+
+The bottom line: a full price comparison across 3-4 stores costs somewhere in the low single-digit rupees. I haven't done exact unit economics yet, but it's cheap enough that I'm not worried about it at this stage.
+
+## What's Next
+
+**Smarter negotiation**<br/>
+The research phase already pulls dealer margins and online reference prices. Right now the agent doesn't use this aggressively enough during calls. I want it to dynamically adjust how hard it pushes based on how the quoted price compares to what it already knows.
 
 **Voice A/B testing**<br/>
-Sarvam's bulbul:v3 has 39 available speakers. I want to test whether different voices (male vs female, formal vs casual) affect the prices shopkeepers quote. The hypothesis: voice characteristics influence perceived social status, which affects the starting price.
+Sarvam's bulbul:v3 has 39 speakers. I'm curious whether different voices -- male vs female, formal vs casual -- affect what price the shopkeeper quotes. My hypothesis: voice characteristics influence perceived social status, which changes the starting price.
 
-**Product-specific conversation flows**<br/>
-Right now the agent uses a generic conversation structure. An AC purchase involves tonnage and copper piping costs; a washing machine involves load capacity and drum type; a laptop involves use case and RAM. Phase 2 will have product-specific conversation trees.
+**Product-specific conversations**<br/>
+Right now the agent asks the same generic questions regardless of what you're buying. But an AC purchase involves tonnage and copper piping costs; a washing machine involves load capacity and drum type; a laptop involves use case and RAM. I want product-specific conversation trees that go deeper on what actually matters.
 
 ---
 
