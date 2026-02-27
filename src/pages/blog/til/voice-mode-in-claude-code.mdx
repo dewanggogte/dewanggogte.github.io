@@ -1,0 +1,67 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Voice mode in Claude Code, for free"
+date: "February 27, 2026"
+type: til
+description: "Hands-free voice chat with Claude Code using local Whisper, macOS say, and a wake word -- no API keys, no subscriptions, ~635MB of RAM."
+---
+
+I use Claude Code. A lot. Sometimes though, I want to talk to it instead of typing -- when I'm thinking through an architecture, or doing something where describing it is easier than typing it out. 
+But the real motivation was chores. Cooking, cleaning, washing clothes -- time when my hands are busy but my brain is free. If I could talk to Claude while doing dishes, that's an extra hour of productive time every day.
+
+I found [this blog](https://medium.com/@kumaran.isk/how-i-added-voice-mode-to-claude-code-hands-free-coding-in-5-minutes-101a5086968f) but their voice mode setup requires OpenAI's Whisper API for speech-to-text and Kokoro for text-to-speech. Both cost money, and Kokoro alone eats ~1.8GB of RAM. That's too much for my 8gb Macbook Air.
+
+So I put together my own system. Here is how it works.
+
+
+
+## Tech stack
+
+**Whisper.cpp for speech-to-text**<br/>
+The open-source C++ port of OpenAI's Whisper. Runs locally, uses CoreML on Apple Silicon, takes about 600MB of RAM. Transcription takes ~0.3 seconds -- you don't notice it.
+
+**macOS `say` for text-to-speech**<br/>
+Already on my Mac. Zero additional RAM. I wrote a small Python server (no dependencies) that wraps `say` in an OpenAI-compatible API so VoiceMode can talk to it without knowing the difference.
+
+**VoiceMode MCP**<br/>
+The open-source [VoiceMode](https://github.com/mbailey/voicemode) project handles the microphone, silence detection, and integration with Claude Code. It's an MCP server -- Claude Code sees it as just another tool.
+
+**"Hey Jarvis" wake word**<br/>
+openWakeWord with a pre-trained model. About 30MB of RAM. The mic is always open, but nothing gets sent to Claude unless it hears "Hey Jarvis" first.
+
+Total RAM overhead: ~635MB. Compare that to the default Kokoro setup at ~2.5GB.
+
+## The trick: wrapping `say` in an OpenAI-compatible API
+
+VoiceMode expects a TTS server that speaks the OpenAI `/v1/audio/speech` protocol Kokoro and OpenAI both expose this API, but macOS `say` doesn't. 
+
+It doesn't take much to bridge that gap though. A Python server using just the standard library accepts the request, maps OpenAI voice names to macOS voices (like "alloy" → "Samantha", "echo" → "Daniel Enhanced"), calls `say -v <voice> -o tempfile.aiff`, converts to WAV using `afconvert` (also built into macOS), and returns the bytes.
+
+
+## Voice quality
+
+It's fine. The Enhanced and Premium voices that Apple ships are decent enough for a coding assistant reading back responses. They're not going to fool anyone into thinking they're human, but that's not the point. If you want better quality, you can swap in Kokoro or Piper later -- the server is just a drop-in replacement on the same port.
+
+## The problem with always-listening
+
+The mic picks up everything -- phone calls, someone in the next room, the TV. Claude tries to act on all of it. The fix is a wake word: say "Hey Jarvis" before speaking, otherwise the mic ignores you. And if Claude is mid-response and you've heard enough, say "Hey Jarvis" again to cut it off.
+
+## Setup
+
+The whole thing is a shell alias and a one-time setup script that installs VoiceMode, Whisper, and the wake word model. After that it's:
+
+```bash
+voice-mode   # starts Whisper + the say server
+claude       # then say "Hey Jarvis" to start talking
+voice-stop   # when you're done
+```
+
+You talk, it transcribes, Claude responds, your Mac reads it back. Say "Hey Jarvis" to interrupt if you've heard enough. So with a Fancy demo voice, I say:
+
+<div style={{textAlign: 'center'}}>
+    _Hands-free coding while doing my laundry. Now possible._
+  
+</div>
+
+
+Replicate it from [GitHub](https://github.com/dewanggogte/voice-in-claude). Ciao.
