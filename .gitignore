@@ -30,3 +30,4 @@ yarn-error.log*
 
 # Writing style reference (private)
 writing_style.md
+.vercel

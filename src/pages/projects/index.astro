@@ -4,6 +4,14 @@ import Footer from '../../components/Footer.astro';
 
 const projects = [
     {
+        name: "Beacon",
+        description: "Autonomous stock screener that scores all 5,300 Indian listed companies across value investing frameworks and multi-agent LLM analysis.",
+        tags: ["typescript", "llm", "next.js"],
+        color: "#e8e0d3",
+        thumb: "/projects/beacon.svg",
+        link: "/blog/projects/building-beacon"
+    },
+    {
         name: "dewanggogte.com",
         description: "Minimal personal website built with Astro and MDX. Zero JavaScript, static, content-first.",
         tags: ["astro", "mdx", "web"],
@@ -52,7 +60,8 @@ const projects = [
     <Footer links={[
         { label: "Resume", href: "/resume", external: true },
         { label: "Home", href: "/" },
-        { label: "Blog", href: "/blog" }
+        { label: "Blog", href: "/blog" },
+        { label: "Games", href: "/games" }
     ]} />
 </Base>
 

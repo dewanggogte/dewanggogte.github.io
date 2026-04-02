@@ -1,0 +1,24 @@
+{
+  "rewrites": [
+    {
+      "source": "/games/watchguessr/:path(.*)",
+      "destination": "https://guessrs.vercel.app/:path"
+    },
+    {
+      "source": "/games/watchguessr",
+      "destination": "https://guessrs.vercel.app/"
+    },
+    {
+      "source": "/games/bugs/:path(.*)",
+      "destination": "https://whats-that-bug.vercel.app/:path"
+    },
+    {
+      "source": "/games/bugs",
+      "destination": "https://whats-that-bug.vercel.app/"
+    },
+    {
+      "source": "/_wtb/:path(.*)",
+      "destination": "https://whats-that-bug.vercel.app/_wtb/:path"
+    }
+  ]
+}

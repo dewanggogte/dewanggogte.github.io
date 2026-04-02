@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 160">
+  <!-- Candlestick chart bars -->
+  <line x1="140" y1="90" x2="140" y2="55" stroke="#b89a4a" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+  <rect x="136" y="65" width="8" height="20" rx="1" fill="none" stroke="#b89a4a" stroke-width="1.8" opacity="0.7"/>
+
+  <line x1="160" y1="100" x2="160" y2="50" stroke="#b89a4a" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+  <rect x="156" y="58" width="8" height="30" rx="1" fill="none" stroke="#b89a4a" stroke-width="1.8" opacity="0.8"/>
+
+  <line x1="180" y1="95" x2="180" y2="45" stroke="#b89a4a" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+  <rect x="176" y="55" width="8" height="25" rx="1" fill="none" stroke="#b89a4a" stroke-width="1.8" opacity="0.7"/>
+
+  <line x1="200" y1="85" x2="200" y2="40" stroke="#b89a4a" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+  <rect x="196" y="48" width="8" height="28" rx="1" fill="none" stroke="#b89a4a" stroke-width="1.8" opacity="0.9"/>
+
+  <line x1="220" y1="80" x2="220" y2="35" stroke="#b89a4a" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+  <rect x="216" y="42" width="8" height="26" rx="1" fill="none" stroke="#b89a4a" stroke-width="1.8" opacity="0.8"/>
+
+  <!-- Upward trend line -->
+  <polyline points="140,78 160,72 180,65 200,58 220,50" fill="none" stroke="#b89a4a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+
+  <!-- Beacon/signal arcs -->
+  <path d="M240 52 C246 48, 246 38, 240 34" fill="none" stroke="#b89a4a" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/>
+  <path d="M245 56 C254 50, 254 32, 245 26" fill="none" stroke="#b89a4a" stroke-width="1.8" stroke-linecap="round" opacity="0.5"/>
+  <path d="M250 60 C262 52, 262 26, 250 18" fill="none" stroke="#b89a4a" stroke-width="1.8" stroke-linecap="round" opacity="0.3"/>
+
+  <!-- Data dots -->
+  <circle cx="140" cy="110" r="2.5" fill="#b89a4a" opacity="0.4"/>
+  <circle cx="160" cy="115" r="2" fill="#b89a4a" opacity="0.3"/>
+  <circle cx="180" cy="108" r="3" fill="#b89a4a" opacity="0.5"/>
+  <circle cx="200" cy="112" r="2" fill="#b89a4a" opacity="0.3"/>
+  <circle cx="220" cy="105" r="2.5" fill="#b89a4a" opacity="0.4"/>
+</svg>

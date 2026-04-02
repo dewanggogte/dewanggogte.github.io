@@ -1,0 +1,92 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Beacon"
+date: "March 17, 2026"
+type: project
+description: "An autonomous stock screener that scores all 5,300 Indian listed companies across value investing frameworks and multi-agent LLM analysis."
+titleLinkText: "Beacon"
+titleLinkUrl: https://beacon.nikamma.in
+---
+
+I've been interested in value investing for a while. Not day trading, not crypto, not "tips from my CA uncle." The Buffett-Graham school. Buy good companies at reasonable prices, hold them, don't check your phone every 4 minutes.
+
+The problem is India has over 5,300 listed companies. Screener.in is great for looking up a company you already know about. But evaluating all of them? Open a page, check the ratios, read the quarterly numbers, form an opinion, move to the next one. Do this 5,300 times. Nobody's doing that.
+
+So I built a pipeline that does.
+
+## How it works
+
+Four stages: scrape, score, analyze, present.
+
+**Scrape**<br/>
+Every listed Indian company gets pulled from Screener.in. Quarterly results, annual P&L, balance sheets, cash flows, shareholding patterns, key ratios, pros and cons. About 13 years of data per company, stored in Postgres. The full scrape takes about 18 hours (I keep the request rate polite).
+
+**Score**<br/>
+21 quantitative metrics across five dimensions: quality (30%), valuation (25%), governance (20%), safety (15%), momentum (10%). The weights are sector-adjusted because you can't evaluate a bank the same way you evaluate an IT company. Debt-to-equity means something very different for HDFC Bank vs TCS.
+
+Four value investing frameworks run on top of this. Buffett's quality checklist, Graham's value screen, Lynch's growth categorization, Pabrai's risk assessment. These get blended into a composite. Companies failing any of 8 hard disqualification rules get flagged regardless of score. Things like net losses in 3 of the last 5 years, or promoter stake declining more than 10 percentage points in a year.
+
+**Analyze**<br/>
+The top ~600 companies by quant score enter a multi-agent LLM pipeline. Four agents, each reading the full data for a company independently.
+
+AG1 does fundamentals. Earnings quality, growth, balance sheet. AG2 does governance. Promoter behaviour, related-party transactions, capital allocation. Indian markets have enough governance disasters that this needs its own agent. AG3 is the devil's advocate. Must find at least 2 risks per company, no matter how good it looks. AG4 reads the other three and produces a final classification and investment thesis.
+
+Not everyone gets the full treatment. ~600 get an AG1 screen, only the best ~200 get all four agents. Keeps the API bill sane.
+
+**Present**<br/>
+Results show up in a dashboard. Eight pages: home with high conviction picks, pipeline overview, rankings, conviction lists, framework comparisons, company deep-dives with agent reasoning, backtesting, pipeline status.
+
+## Numbers alone are not enough
+
+Two companies can have identical scores but very different stories. One might be a well-run mid-cap that's genuinely undervalued. The other might have great numbers because it's cooking the books (hello, certain infrastructure companies).
+
+AG3 has flagged companies that looked perfect on paper but had concerning related-party transaction patterns. You'd catch that reading the annual report. You wouldn't catch it with a formula.
+
+There's a divergence watcher that runs after the pipeline finishes. When AG4 and the quant score disagree by more than 25 points or 2 classification levels, it emails me. I look at those manually. They're usually the ones worth looking at.
+
+## The classification bug
+
+This was the most important bug in the whole project. It lived in the system for weeks before I noticed, and it undermined the entire point of having LLM agents.
+
+The original design worked like this: the quant scoring stage would classify each company (strong long, long, hold, avoid, etc). Then the LLM agents would review the company and produce "adjustments" to that score. Plus 5, minus 3, that kind of thing.
+
+The problem was anchoring. If the quant stage said a company scored 72, the agents would see that number and nudge it to 68 or 76. They'd never say 30. The classification was locked in at the quant stage and the agents could only adjust around the edges.
+
+This meant the entire multi-agent pipeline was basically rubber-stamping whatever the formula said. I was spending money on API calls to get a slightly adjusted version of the number I already had.
+
+The fix had two parts. First, the agents now produce independent scores from 0 to 100. They don't see the quant score at all. They get the raw financial data and make their own judgment. Second, AG4 has override authority. If the numbers say "strong long" but AG4 sees something the formula can't capture (governance red flags, unsustainable earnings patterns, sector headwinds), it can downgrade the classification entirely. Or the other way.
+
+AG4 actually disagrees with the quant score now. Which is the whole point.
+
+## Bugs I remember
+
+### Indian number formatting
+
+Screener.in formats numbers the Indian way. 19,10,048 instead of 1,910,048. The parser needed to handle lakhs and crores natively, not assume Western comma groupings. Some company pages just don't have certain financial tables. The scraper kept crashing until I added null handling for every single field.
+
+### Haiku's invisible ceiling
+
+Haiku kept truncating its output at 1024 tokens. Took me longer than I'd like to admit to realize that was a maxTokens setting, not a model limitation.
+
+## Tech stack
+
+**Scraper**<br/>
+HTTP + Cheerio. No headless browser. Screener.in doesn't need one.
+
+**Database**<br/>
+PostgreSQL 17, Drizzle ORM. Flat columns for queries, JSONB for time-series.
+
+**LLM**<br/>
+Anthropic Claude (Haiku for screening, Sonnet for synthesis) with prompt caching. Or local Qwen 3.5 via SGLang when I don't want to spend on API calls.
+
+**Dashboard**<br/>
+Next.js 15, Tailwind CSS 4, Source Serif 4 font, terracotta accent color.
+
+**Infra**<br/>
+Docker, K3s homelab, GitHub Actions, ArgoCD. Weekly CronJob. Saturday night scrape, scoring and LLM analysis through the night, dashboard updated by Sunday.
+
+---
+
+Code is at [github.com/dewanggogte/beacon](https://github.com/dewanggogte/beacon). I built it because I wanted it.
+
+Ciao.

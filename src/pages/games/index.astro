@@ -1,0 +1,146 @@
+---
+import Base from '../../layouts/Base.astro';
+import Footer from '../../components/Footer.astro';
+
+const games = [
+    {
+        name: "WatchGuessr",
+        description: "Identify iconic timepieces from masked photos. Brand text is blurred out — use the case, hands, and bezel as clues.",
+        tags: ["quiz", "watches"],
+        color: "#e0dde8",
+        emoji: "\u231A",
+        link: "/games/watchguessr/"
+    },
+    {
+        name: "What's That Bug?",
+        description: "A GeoGuessr-style insect identification game. See real bug photos from iNaturalist and guess the species from 4 choices.",
+        tags: ["quiz", "insects"],
+        color: "#dde8df",
+        emoji: "\uD83E\uDEB2",
+        link: "/games/bugs/"
+    }
+];
+---
+
+<Base title="Games - Dewang Gogte">
+    <header>
+        <h1><a href="/" class="home-link">Dewang Gogte</a></h1>
+        <p class="page-subtitle">Games</p>
+    </header>
+
+    <section class="games-grid">
+        {games.map(game => (
+            <a href={game.link} class="grid-card">
+                <div class="card-thumb" style={`background-color: ${game.color};`}>
+                    <span class="thumb-emoji">{game.emoji}</span>
+                </div>
+                <div class="card-body">
+                    <span class="card-title">{game.name}</span>
+                    <p class="card-desc">{game.description}</p>
+                    <div class="card-tags">
+                        {game.tags.map(tag => (
+                            <span class="chip">{tag}</span>
+                        ))}
+                    </div>
+                </div>
+            </a>
+        ))}
+    </section>
+
+    <p class="disclaimer">These games are hosted on separate Vercel deployments and proxied here. They may take a moment to load on first visit.</p>
+
+    <Footer links={[
+        { label: "Resume", href: "/resume", external: true },
+        { label: "Home", href: "/" },
+        { label: "Blog", href: "/blog" },
+        { label: "Projects", href: "/projects" }
+    ]} />
+</Base>
+
+<style>
+    .home-link { color: var(--text); }
+    .home-link:hover { color: var(--accent); text-decoration: none; }
+
+    .page-subtitle {
+        color: var(--text-light);
+        font-size: 1rem;
+        margin-top: 0.25rem;
+    }
+
+    .games-grid {
+        margin-top: 2.5rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+    }
+
+    .grid-card {
+        display: block;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+        color: var(--text);
+        transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .grid-card:hover {
+        border-color: var(--accent);
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    .card-thumb {
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .thumb-emoji {
+        font-size: 2.5rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .card-title {
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .card-desc {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        margin-top: 0.3rem;
+        line-height: 1.45;
+    }
+
+    .card-tags {
+        margin-top: 0.6rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+    }
+
+    .chip {
+        font-size: 0.65rem;
+        padding: 0.1rem 0.4rem;
+        border-radius: 3px;
+        background: #f0eee9;
+        color: var(--text-light);
+    }
+
+    .disclaimer {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        margin-top: 2rem;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 500px) {
+        .games-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
