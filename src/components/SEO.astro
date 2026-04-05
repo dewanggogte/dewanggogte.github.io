@@ -1,0 +1,90 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  type?: 'website' | 'article';
+  publishedDate?: string;
+  jsonLD?: Record<string, unknown>;
+}
+
+const SITE_URL = 'https://dewanggogte.com';
+const SITE_NAME = 'Dewang Gogte';
+const OG_IMAGE = `${SITE_URL}/og-default.png`;
+const OG_IMAGE_ALT = 'Dewang Gogte — startup operator based in Bangalore, India';
+
+const {
+  title,
+  description,
+  type = 'website',
+  publishedDate,
+  jsonLD,
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
+
+// Parse "Month DD, YYYY" to ISO 8601 with IST timezone
+function toISO(dateStr: string): string {
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '';
+  // Format as YYYY-MM-DDT00:00:00+05:30 (IST)
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T00:00:00+05:30`;
+}
+
+const isoDate = publishedDate ? toISO(publishedDate) : '';
+---
+
+<!-- Primary Meta Tags -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{title}</title>
+<meta name="description" content={description}>
+<meta name="author" content="Dewang Gogte">
+<link rel="canonical" href={canonicalURL}>
+
+<!-- Open Graph -->
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<meta property="og:url" content={canonicalURL}>
+<meta property="og:type" content={type}>
+<meta property="og:site_name" content={SITE_NAME}>
+<meta property="og:locale" content="en_IN">
+<meta property="og:image" content={OG_IMAGE}>
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content={OG_IMAGE_ALT}>
+{type === 'article' && isoDate && (
+  <meta property="article:published_time" content={isoDate} />
+)}
+{type === 'article' && (
+  <meta property="article:author" content={SITE_URL} />
+)}
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content={title}>
+<meta name="twitter:description" content={description}>
+<meta name="twitter:image" content={OG_IMAGE}>
+<meta name="twitter:image:alt" content={OG_IMAGE_ALT}>
+
+<!-- Favicons -->
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+
+<!-- RSS -->
+<link rel="alternate" type="application/rss+xml" title={SITE_NAME} href={`${SITE_URL}/rss.xml`}>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
+
+<!-- Analytics -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="2aa5ada3-d88c-44ac-aed9-4dac3c12b7f2"></script>
+
+<!-- JSON-LD Structured Data -->
+{jsonLD && (
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLD)} />
+)}

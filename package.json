@@ -5,13 +5,15 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "astro build && mv dist/sitemap-0.xml dist/sitemap-1.xml && sed -i '' 's/sitemap-0.xml/sitemap-1.xml/g' dist/sitemap-index.xml",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",
+    "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.0",
-    "astro": "^5.0.0"
+    "astro": "^5.0.0",
+    "sharp": "^0.34.5"
   }
 }

@@ -1,5 +1,6 @@
 ---
 import Footer from '../components/Footer.astro';
+import SEO from '../components/SEO.astro';
 
 interface Props {
     title: string;
@@ -18,32 +19,72 @@ const typeLabels: Record<string, string> = {
     'project': 'Project'
 };
 const typeLabel = typeLabels[type] || 'Article';
-const canonicalURL = new URL(Astro.url.pathname, "https://dewanggogte.com");
 const metaDescription = description || title;
+
+const SITE_URL = 'https://dewanggogte.com';
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
+
+// Parse date for ISO 8601
+function toISO(dateStr: string): string {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '';
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T00:00:00+05:30`;
+}
+
+// Breadcrumb category label
+const categoryLabels: Record<string, string> = {
+    'til': 'T.I.L.',
+    'project': 'Projects',
+    'weekly-review': 'Weekly Reviews',
+    'article': 'Articles',
+};
+
+// Build JSON-LD: BlogPosting + BreadcrumbList
+const jsonLD = {
+    '@context': 'https://schema.org',
+    '@graph': [
+        {
+            '@type': 'BlogPosting',
+            headline: title,
+            description: metaDescription,
+            datePublished: toISO(date),
+            author: {
+                '@type': 'Person',
+                name: 'Dewang Gogte',
+                url: SITE_URL,
+            },
+            publisher: {
+                '@type': 'Person',
+                name: 'Dewang Gogte',
+                url: SITE_URL,
+            },
+            mainEntityOfPage: canonicalURL.toString(),
+            image: `${SITE_URL}/og-default.png`,
+        },
+        {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+                { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog/` },
+                { '@type': 'ListItem', position: 3, name: categoryLabels[type] || 'Blog', item: `${SITE_URL}/blog/` },
+                { '@type': 'ListItem', position: 4, name: title },
+            ],
+        },
+    ],
+};
 ---
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title} - Dewang Gogte</title>
-    <meta name="description" content={metaDescription}>
-    <link rel="canonical" href={canonicalURL}>
-    <meta property="og:title" content={`${title} - Dewang Gogte`}>
-    <meta property="og:description" content={metaDescription}>
-    <meta property="og:url" content={canonicalURL}>
-    <meta property="og:type" content="article">
-    <meta property="og:image" content="https://dewanggogte.com/android-chrome-512x512.png">
-    <meta name="twitter:card" content="summary">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
-    <script defer src="https://cloud.umami.is/script.js" data-website-id="2aa5ada3-d88c-44ac-aed9-4dac3c12b7f2"></script>
+    <SEO
+      title={`${title} - Dewang Gogte`}
+      description={metaDescription}
+      type="article"
+      publishedDate={date}
+      jsonLD={jsonLD}
+    />
 </head>
 <body>
     <div class="container">
