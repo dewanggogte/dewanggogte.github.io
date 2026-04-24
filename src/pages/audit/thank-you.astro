@@ -1,0 +1,80 @@
+---
+// src/pages/audit/thank-you.astro
+import Base from '../../layouts/Base.astro';
+import Footer from '../../components/Footer.astro';
+import CTAButton from '../../components/CTAButton.astro';
+import { GOOGLE_FORM_URL } from '../../config/audit';
+---
+
+<Base title="Thanks — AI Operations Audit" noindex={true}>
+  <header>
+    <h1>Thanks. You're in.</h1>
+  </header>
+
+  <section class="bio">
+    <p>
+      Payment received. You'll get an email confirmation from PayPal in the next
+      couple of minutes. Keep that handy, you'll need the Transaction ID in step 1.
+    </p>
+
+    <p>Next steps, in order.</p>
+
+    <p>
+      <strong>1. Fill the intake form.</strong><br/>
+      Takes about 15 minutes. The first question asks for your PayPal Transaction
+      ID so I can match your payment to your audit (it's in the PayPal receipt
+      email, a string that looks like <code>1A2BC3DEF4567890G</code>). The rest is
+      about your business and the processes you want looked at.
+    </p>
+
+    <div class="cta-row">
+      <CTAButton
+        label="Open the intake form"
+        href={GOOGLE_FORM_URL}
+        variant="primary"
+        external
+      />
+    </div>
+
+    <p>
+      <strong>2. Record 2-3 Looms.</strong><br/>
+      Pick the 2-3 most repetitive tasks your team does. Someone on the team
+      screen-records themselves doing it (5-10 minutes each). Reply to the PayPal
+      receipt email with the links.
+    </p>
+
+    <p>
+      <strong>3. We'll book a 30-min understanding call.</strong><br/>
+      Once your form and recordings are in, I'll email you a Calendly link for a
+      short call so we can make sure I understand your processes correctly before
+      starting the analysis.
+    </p>
+
+    <p>
+      <strong>4. Report in 5-7 business days after that call.</strong><br/>
+      PDF delivered by email, plus a link to book a 30-min review call to walk
+      through it.
+    </p>
+
+    <p>If anything's unclear, reply to the receipt email. I read every one.</p>
+  </section>
+
+  <Footer links={[
+    { label: "Home", href: "/" },
+    { label: "Blog", href: "/blog/" }
+  ]} />
+</Base>
+
+<style>
+  .cta-row {
+    margin: 1.5rem 0 2rem;
+  }
+
+  code {
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
+    font-size: 0.85em;
+    background: #f3f1ee;
+    padding: 0.15em 0.35em;
+    border-radius: 3px;
+  }
+</style>
