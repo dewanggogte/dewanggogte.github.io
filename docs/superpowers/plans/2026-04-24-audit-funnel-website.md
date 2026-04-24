@@ -222,26 +222,21 @@ git commit -m "feat: CTAButton component with primary and secondary variants"
 
 **Reference:** spec §3.8.
 
-- [ ] **Step 1: Update `pageDescriptions`**
+- [ ] **Step 1: Add new keys to `pageDescriptions` (do NOT overwrite existing ones)**
 
-Replace the existing `pageDescriptions` object (lines 15-21) with:
+The existing `pageDescriptions` object in `Base.astro` was tightened for the consulting voice in the SEO overhaul + repositioning commits. Keep those values verbatim. Only ADD the five new audit/services keys plus the DEFERRED comment. Concretely, INSIDE the existing object, after the `/blog/` entry, add:
 
 ```ts
-const pageDescriptions: Record<string, string> = {
-  '/': 'Freelance AI automation and product work for businesses with manual operational processes. Based in Bangalore, working globally.',
   '/audit/': 'Fixed $250 AI Operations Audit. I find 20+ hours a week of work your team can automate, or the audit is free.',
   '/audit/thank-you/': 'Thanks for booking the AI Operations Audit. Here are the next steps.',
   '/services/': 'Freelance AI automation, product consulting, and fractional ops. Services, pricing, and case studies from Dewang Gogte.',
   '/services/case-studies/callkaro/': 'Case study: voice AI agent for Hindi price checks across local stores in India. Built by Dewang Gogte.',
   '/services/case-studies/beacon/': 'Case study: autonomous equity research platform covering all 5,300 Indian listed companies. Built by Dewang Gogte.',
-  '/games/': 'Free browser games. Identify watches, guess insects, and more.',
-  '/projects/': 'Projects by Dewang Gogte. Stock screeners, voice AI agents, and web experiments.',
-  '/resume/': 'Resume of Dewang Gogte. Startup operator based in Bangalore, India.',
-  '/blog/': 'Writing about startups, projects, and things I learn along the way.',
   // DEFERRED — add when /audit/checkout/ is built (spec §3.2)
   // '/audit/checkout/': 'Complete your AI Operations Audit purchase.',
-};
 ```
+
+The existing `/`, `/games/`, `/projects/`, `/resume/`, `/blog/` keys stay untouched.
 
 - [ ] **Step 2: Add `noindex` prop to Props interface and use it**
 
