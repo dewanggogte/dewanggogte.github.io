@@ -5,9 +5,10 @@ interface Props {
   title?: string;
   description?: string;
   jsonLD?: Record<string, unknown>;
+  noindex?: boolean;
 }
 
-const { title = "Dewang Gogte", description, jsonLD } = Astro.props;
+const { title = "Dewang Gogte", description, jsonLD, noindex = false } = Astro.props;
 
 const SITE_URL = 'https://dewanggogte.com';
 
@@ -18,6 +19,13 @@ const pageDescriptions: Record<string, string> = {
   '/projects/': 'Projects by Dewang Gogte — voice AI agents, stock screeners, and other things I have built.',
   '/resume/': 'Resume of Dewang Gogte — AI and automation consultant, Bangalore.',
   '/blog/': 'Writing about AI agents, automation, and things I learn building them.',
+  '/audit/': 'Fixed $250 AI Operations Audit. I find 20+ hours a week of work your team can automate, or the audit is free.',
+  '/audit/thank-you/': 'Thanks for booking the AI Operations Audit. Here are the next steps.',
+  '/services/': 'Freelance AI automation, product consulting, and fractional ops. Services, pricing, and case studies from Dewang Gogte.',
+  '/services/case-studies/callkaro/': 'Case study: voice AI agent for Hindi price checks across local stores in India. Built by Dewang Gogte.',
+  '/services/case-studies/beacon/': 'Case study: autonomous equity research platform covering all 5,300 Indian listed companies. Built by Dewang Gogte.',
+  // DEFERRED — add when /audit/checkout/ is built (spec §3.2)
+  // '/audit/checkout/': 'Complete your AI Operations Audit purchase.',
 };
 
 const pathname = Astro.url.pathname;
@@ -70,6 +78,7 @@ const finalJsonLD = jsonLD || (isHomepage ? homepageJsonLD : undefined);
       type="website"
       jsonLD={finalJsonLD}
     />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
 </head>
 <body>
     <div class="container">
