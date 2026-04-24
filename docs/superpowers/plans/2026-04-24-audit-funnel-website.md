@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Turn the current minimal personal site into a freelance acquisition funnel by shipping the `/audit/` landing page, `/services/` overview, two case studies, a post-payment thank-you page, and the supporting home-page and SEO updates. Launch is the ACTIVE path only (single-price $497, post-payment reconciliation, external Google Form). Items marked DEFERRED in `spec_website_changes.md` are explicitly NOT built.
+**Goal:** Turn the current minimal personal site into a freelance acquisition funnel by shipping the `/audit/` landing page, `/services/` overview, two case studies, a post-payment thank-you page, and the supporting home-page and SEO updates. Launch is the ACTIVE path only (single-price $250, post-payment reconciliation, external Google Form). Items marked DEFERRED in `spec_website_changes.md` are explicitly NOT built.
 
 **Architecture:** Static Astro 5 site. All new pages inherit the existing `Base.astro` layout (640px container, warm-cream background `#fdfcfb`, serif typography, rust-orange accent `#b85a3b`). The two case studies reuse the wider 800px `BlogPost.astro` layout via `.mdx` frontmatter, matching existing blog-post typography. One new component — `CTAButton.astro` — introduces the first styled button in the codebase and is the only new visual element. No JavaScript beyond what Astro already emits. External services (PayPal, Calendly, Google Form) are linked by URL placeholder tokens that get replaced once the pipeline spec is wired.
 
@@ -19,7 +19,7 @@
 - Final end-to-end funnel test (PayPal $1 invoice → Google Form → reconciliation) is covered in the pipeline spec, not here. This plan ends at "pages render correctly with placeholder URLs".
 
 **External URL constants in `src/config/audit.ts`:**
-- `PAYPAL_LINK = 'https://www.paypal.com/ncp/payment/PHAQHJKXEBN52'` — hosted PayPal NCP button URL (fixed-amount $497, opens in new tab, returns to `/audit/thank-you/` after payment).
+- `PAYPAL_LINK = 'https://www.paypal.com/ncp/payment/PHAQHJKXEBN52'` — hosted PayPal NCP button URL (fixed-amount $250, opens in new tab, returns to `/audit/thank-you/` after payment).
 - `CALENDLY_CALL_URL = 'https://calendly.com/dewanggogte/30min'` — single Calendly event linked from the website (30-min intro/questions call). Other events (understanding call, review call) are booked via email after intake, not linked from the site.
 - `GOOGLE_FORM_URL = 'TODO:GOOGLE_FORM_URL'` — only remaining placeholder. Swap in Task 11 once the Google Form is set up per pipeline spec §11.
 
@@ -28,7 +28,7 @@
 - *First styled button in the codebase.* `CTAButton.astro` sets a precedent. Keeping it scoped to just primary/secondary variants — no sizes, no icons — so it doesn't bloat before we know what we actually need.
 - *One placeholder URL still ships.* `GOOGLE_FORM_URL` is `TODO:` until the pipeline spec completes — the "Open the intake form" CTA on `/audit/thank-you/` will be a broken link until Task 11. Low risk: `/audit/thank-you/` is only reached after a real PayPal payment, and the page text tells the buyer to reply to the PayPal receipt email if anything is unclear. Still, don't deploy publicly until Task 11 is done.
 - *Case-study port uses MDX + BlogPost layout.* Easier to write, but the BlogPost layout has a "Back to Blog" link in its header. We accept this for launch (a case study with a "Back to Blog" link is still usable) and file a followup to make the back-link configurable. Noted at the end of the plan.
-- *No A/B price test at launch.* Single price $497. All A/B mechanics in spec §3.1.1 are DEFERRED. The plan preserves this as `src/config/audit.ts`'s `PRICE = 497` constant so re-enabling is a small code change, not a rewrite.
+- *No A/B price test at launch.* Single price $250. All A/B mechanics in spec §3.1.1 are DEFERRED. The plan preserves this as `src/config/audit.ts`'s `PRICE = 250` constant so re-enabling is a small code change, not a rewrite.
 
 ---
 
@@ -77,7 +77,7 @@
 // (spec_automated_pipeline.md §11) completes. Keep the token name — it's
 // grep-able for the replacement pass.
 
-export const AUDIT_PRICE_USD = 497;
+export const AUDIT_PRICE_USD = 250;
 
 export const PAYPAL_LINK = 'https://www.paypal.com/ncp/payment/PHAQHJKXEBN52';
 export const CALENDLY_CALL_URL = 'https://calendly.com/dewanggogte/30min';
@@ -229,7 +229,7 @@ Replace the existing `pageDescriptions` object (lines 15-21) with:
 ```ts
 const pageDescriptions: Record<string, string> = {
   '/': 'Freelance AI automation and product work for businesses with manual operational processes. Based in Bangalore, working globally.',
-  '/audit/': 'Fixed $497 AI Operations Audit. I find 20+ hours a week of work your team can automate, or the audit is free.',
+  '/audit/': 'Fixed $250 AI Operations Audit. I find 20+ hours a week of work your team can automate, or the audit is free.',
   '/audit/thank-you/': 'Thanks for booking the AI Operations Audit. Here are the next steps.',
   '/services/': 'Freelance AI automation, product consulting, and fractional ops. Services, pricing, and case studies from Dewang Gogte.',
   '/services/case-studies/callkaro/': 'Case study: voice AI agent for Hindi price checks across local stores in India. Built by Dewang Gogte.',
@@ -459,7 +459,7 @@ const auditJsonLD = {
 };
 ---
 
-<Base title="AI Operations Audit — $497" jsonLD={auditJsonLD}>
+<Base title="AI Operations Audit — $250" jsonLD={auditJsonLD}>
   <header>
     <h1>AI Operations Audit</h1>
   </header>
@@ -704,7 +704,7 @@ Expected:
 - Fits the 640px container.
 - Two CTAs in the hero, sitting side-by-side on desktop, stacking on mobile (resize browser below 480px to check).
 - All case-study and services links go to their target routes (they'll 404 until Tasks 6-8 land — that's fine for this check, just confirm the hrefs are correct).
-- View page source — confirm JSON-LD `<script type="application/ld+json">` block is present, and `Service` and `$497` appear inside.
+- View page source — confirm JSON-LD `<script type="application/ld+json">` block is present, and `Service` and `$250` appear inside.
 
 Stop the dev server.
 
@@ -1121,7 +1121,7 @@ I help businesses automate the repetitive operational work their teams are doing
 
 Before this, I was at Iden (Accel), Drip Capital (YC + Accel), and American Express. Studied Biotech and AI at IIT Kharagpur.
 
-If you run a business with manual operational work that could be automated, I run a fixed $497 [AI Operations Audit](/audit/). About 10 days end-to-end, mostly async, money-back if I can't find at least 20 hours a week of automatable work.
+If you run a business with manual operational work that could be automated, I run a fixed $250 [AI Operations Audit](/audit/). About 10 days end-to-end, mostly async, money-back if I can't find at least 20 hours a week of automatable work.
 
 This site is a place to share my thoughts, projects, and some [photos](https://instagram.com/dewangraphy) and [music](https://open.spotify.com/user/iwg7ch1br16aowx3t2sankj9a). More of all that over time.
 
@@ -1298,7 +1298,7 @@ Walk every path:
 - [ ] From `/`, click the availability pill → lands on `/services/`.
 - [ ] From `/`, click the "AI Operations Audit" link in the bio → lands on `/audit/`.
 - [ ] From `/`, click each footer link → correct destination.
-- [ ] From `/audit/`, click the primary hero CTA → opens PayPal in a new tab at the correct $497 link.
+- [ ] From `/audit/`, click the primary hero CTA → opens PayPal in a new tab at the correct $250 link.
 - [ ] From `/audit/`, click the secondary hero CTA → opens Calendly 30-min event in a new tab.
 - [ ] From `/audit/`, click the CallKaro link → lands on `/services/case-studies/callkaro/`.
 - [ ] From `/audit/`, click the Beacon link → lands on `/services/case-studies/beacon/`.
