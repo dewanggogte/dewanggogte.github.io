@@ -24,6 +24,7 @@ const target = external ? '_blank' : undefined;
 <style>
   .cta-button {
     display: inline-block;
+    text-decoration: none;
     padding: 0.75rem 1.5rem;
     border-radius: 4px;
     font-size: 0.95rem;
@@ -31,6 +32,11 @@ const target = external ? '_blank' : undefined;
     font-family: inherit;
     line-height: 1.2;
     transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .cta-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   .cta-button + .cta-button {
@@ -47,7 +53,6 @@ const target = external ? '_blank' : undefined;
     background: #9d4a30;
     border-color: #9d4a30;
     color: #fff;
-    text-decoration: none;
   }
 
   .cta-secondary {
@@ -59,7 +64,6 @@ const target = external ? '_blank' : undefined;
   .cta-secondary:hover {
     background: var(--accent);
     color: #fff;
-    text-decoration: none;
   }
 
   @media (max-width: 480px) {
