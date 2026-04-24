@@ -1,0 +1,151 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Beacon: autonomous equity research at scale"
+date: "April 24, 2026"
+type: "project"
+description: "Case study: autonomous equity research platform covering all 5,300 Indian listed companies. Built by Dewang Gogte."
+---
+
+import CTAButton from '../../../components/CTAButton.astro';
+import { PAYPAL_LINK, CALENDLY_CALL_URL, AUDIT_PRICE_USD } from '../../../config/audit';
+
+A case study on Beacon, a research platform that scrapes, scores, and analyzes every listed Indian company using quantitative frameworks and a multi-agent LLM pipeline.
+
+Built as a portfolio project structured around the real needs of a boutique investment firm. Public at [github.com/dewanggogte/beacon](https://github.com/dewanggogte/beacon). Technical deep dive on the [blog](/blog/projects/building-beacon).
+
+---
+
+## The problem
+
+Boutique PMSes, family offices, and retail investment platforms in India all share the same problem. The public market has 5,300+ listed companies. Traditional analyst teams can only deeply cover 30-50. Everything else gets ignored, screened out by crude filters, or covered sporadically when a name pops up in the news.
+
+The real alpha sits in the companies nobody's looking at. Small-cap mispricings. Mid-cap governance problems hiding in plain sight. Quality compounders outside the Nifty 500. Firms without the headcount to cover the full market are systematically missing this.
+
+The conventional solution is to buy expensive screener databases (Bloomberg, Capitaline) and write SQL. That tells you which companies rank well on ROE. It doesn't tell you which ones are actually worth owning. Which ones have promoter red flags. Which ones have hidden segment risk. How any of this changes across macro regimes.
+
+A platform needs three things to solve this properly. Full-market coverage (not the top 500). A defensible scoring methodology (not "high ROE"). Qualitative analysis layered on top of the quant (because financials alone miss governance and business quality).
+
+None of this scales with humans.
+
+## Who'd use this
+
+- Boutique PMSes running sub-₹500 Cr AUM that can't afford a 10-analyst team
+- Family offices managing public equity allocations alongside other asset classes
+- Fintech platforms offering stock screening, advisory, or curated portfolios to retail investors
+- Research firms selling systematic coverage to institutional clients
+- SEBI-registered RIAs who need defensible, framework-based recommendations
+- Individual HNIs running their own book who want analyst-grade coverage without hiring
+
+The common thread: anyone who needs opinionated, well-justified coverage of the full Indian listed universe, not just the top 500.
+
+## What was built
+
+Two-layer architecture. Every company goes through Layer 1. A qualified subset goes through Layer 2.
+
+**Layer 1: quantitative scoring.**
+
+Every company gets scored on 21 metrics across 5 dimensions: valuation (25% weight), quality (30%), governance (20%), safety (15%), momentum (10%). Sector-specific adjustments for IT, Banking, Pharma, Manufacturing, and FMCG (because a bank's 15% ROE is excellent and a FMCG company's 15% ROE is mediocre; the same score across sectors is meaningless).
+
+Four framework evaluators run in parallel:
+- Buffett's 10-criteria checklist (economic moat, consistent earnings, low capex, etc.)
+- Graham's defensive screen (debt-to-equity, earnings stability, dividend record)
+- Lynch's 6-category classification (fast grower, stalwart, slow grower, cyclical, turnaround, asset play)
+- Pabrai's risk assessment (6 factors)
+
+Eight hard disqualifiers flag companies regardless of score. Consecutive losses, promoter stake decline greater than 10pp a year, related-party transaction concentration above threshold, etc.
+
+Composite score is classification-aware. Fast growers weight Lynch's framework at 30%. Stalwarts weight dividend safety and quality higher. A single one-size-fits-all composite misses the point.
+
+Final classification: strong_long (>=80), potential_long (>=65), neutral (>=40), potential_short (>=20), strong_avoid (<20).
+
+**Layer 2: multi-agent LLM analysis.**
+
+A 4-agent pipeline with structured chain-of-thought prompts:
+
+- **AG1, Fundamentals.** Business quality, competitive moats, growth trajectory.
+- **AG2, Governance.** Promoter track record, related-party transactions, capital allocation history.
+- **AG3, Risk (Devil's Advocate).** Must surface at least 2 material risks per company. Deliberately adversarial.
+- **AG4, Synthesis.** Final assessment with macro regime context and peer comparison. Has authority to override the Layer 1 quant classification.
+
+AG1 and AG4 each produce independent scores (0-100), not just adjustments to the quant score. Both the quant and AG4 classifications are preserved in the dashboard with attribution for each, so the user always sees where the opinion came from.
+
+**Funnel tiering controls LLM cost.**
+
+Top 100 quant-ranked companies get full AG1 to AG4. The next 500 get AG1 screening, and the top 100 from that cohort get promoted to full analysis. Remaining 4,500+ get Layer 1 quant coverage only. This concentrates LLM spend where depth matters while keeping full-market coverage intact.
+
+**Post-validation catches hallucinations.**
+
+LLM outputs get cross-checked against the actual quantitative data. If AG4 writes "strong promoter track record" but the data shows a 15pp promoter stake decline in 3 years, the system flags the contradiction and down-ranks the claim. This design treats LLM output as a separate signal to be validated, not as ground truth.
+
+**Divergence watcher for human review.**
+
+When quant and AG4 disagree significantly on classification, an email alert goes out. The interesting companies are always the ones the two layers disagree on. Humans review those explicitly.
+
+## The hard parts
+
+**Scraping without getting blocked.**
+Screener.in serves 13 years of financials, ratios, shareholding, and peer comparisons per company. Scraping 5,300 companies sustainably means careful rate limiting, rotating user agents, and graceful handling of HTML structure changes. I used native fetch + Cheerio, no headless browser needed. The whole scrape finishes in a few hours.
+
+**Sector-specific weighting.**
+The same financial metric means completely different things across sectors. A bank with 15% ROE is excellent. A FMCG company with 15% ROE is mediocre. I built per-sector weight adjustments and metric substitutions (NIM for banks instead of operating margin, asset turnover for retail, etc.).
+
+**Classification-aware scoring.**
+Lynch's framework splits companies into 6 categories, and each deserves different weighting. A fast grower's composite should emphasize momentum and growth. A stalwart should emphasize quality and dividend safety. I built the entire composite engine to vary by Lynch category. Different weight tables, different disqualifiers, different thresholds.
+
+**LLM hallucinations on financial data.**
+Claude and Qwen are great at reasoning. They also confidently make up numbers. Post-validation became essential. Every numerical claim AG1-AG4 makes gets cross-referenced against actual data. Contradictions override the LLM. The dual-scoring design (AG1 and AG4 as independent scores, not adjustments) lets the system treat LLM output as a separate input rather than as truth.
+
+**Making 8 dashboard pages useful, not pretty.**
+Most financial dashboards bury the signal in data tables. Beacon shows conviction badges, framework-specific breakdowns, agent reasoning visible per claim, and backtest results alongside the live picks. The design is warm, minimal, light-theme. Deliberately not a Bloomberg terminal.
+
+## The numbers
+
+- 5,300+ companies scored, end-to-end pipeline refreshable on demand
+- 21 quantitative metrics, 4 investing frameworks, 8 hard disqualifiers
+- 4 specialized LLM agents with funnel tiering (top 100 + next 100 promoted = 200 full analyses per run)
+- Post-validation catches roughly 1 in 5 LLM claims that contradict quant data in testing
+- Dashboard: 8 pages, Next.js 15, Tailwind, deployed on K3s via ArgoCD
+- Pipeline runs end to end in under an hour on a home GPU with Qwen 3.5, or on Claude Haiku for a few dollars per full scan
+- Monorepo structure with 4 packages (shared, scraper, analyzer, dashboard)
+
+## What this translates to for a client engagement
+
+If you run a boutique PMS, family office, retail investment platform, fintech with a screening or advisory layer, or an investment research firm covering Indian equities, this is the kind of system I can build for you.
+
+Possible engagement shapes:
+
+**Custom scoring layer (3-4 weeks).**
+Your scoring philosophy, your sector weights, your disqualifiers, built into the existing engine. You own the IP.
+
+**Full platform, white-labeled (8-12 weeks).**
+Beacon's architecture, adapted to your branding, your data sources, your user flows. Ends with a deployable system.
+
+**LLM research pipeline only (4-6 weeks).**
+Your existing quant data, plus a multi-agent qualitative layer on top. Validates against your data. Outputs framework-specific reports.
+
+**Single-name deep dives on-demand (ongoing retainer).**
+Your team requests any Indian-listed name, gets back a framework-based report in 24 hours. Good for boutique PMSes that don't want to run the full pipeline themselves.
+
+Numbers depend on scope. The base system took ~400 hours across 5 months.
+
+## For potential clients
+
+If you're evaluating whether a data-gathering + LLM-analysis pipeline is worth
+building for your research workflow, this is the kind of system I can build
+end-to-end. A good starting point is the
+[AI Operations Audit](/audit/): I'll look at your team's current research and
+analysis process and tell you where automation is likely to pay off fastest.
+
+The deep technical writeup of Beacon is on the
+[blog](/blog/projects/building-beacon/).
+
+<div class="cta-row">
+  <CTAButton label={`Buy the audit ($${AUDIT_PRICE_USD})`} href={PAYPAL_LINK} variant="primary" external />
+  <CTAButton label="Book a call" href={CALENDLY_CALL_URL} variant="secondary" external />
+</div>
+
+<style>{`
+  .cta-row {
+    margin: 2rem 0 1rem;
+  }
+`}</style>
