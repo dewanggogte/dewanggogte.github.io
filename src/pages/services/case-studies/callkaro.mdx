@@ -1,0 +1,126 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "CallKaro: voice AI for Hindi price checks"
+date: "April 24, 2026"
+type: "project"
+description: "Case study: voice AI agent for Hindi price checks across local stores in India. Built by Dewang Gogte."
+---
+
+import CTAButton from '../../../components/CTAButton.astro';
+import { PAYPAL_LINK, CALENDLY_CALL_URL, AUDIT_PRICE_USD } from '../../../config/audit';
+
+A case study on CallKaro, an autonomous voice AI agent that calls local stores in natural Hindi/Hinglish, asks about product prices, negotiates, and returns structured quotes.
+
+Built as a portfolio project structured around the real needs of a retail intelligence platform. Public at [github.com/dewanggogte/CallKaro](https://github.com/dewanggogte/CallKaro). Technical deep dive on the [blog](/blog/projects/building-callkaro).
+
+---
+
+## The problem
+
+Indian retail intelligence is a messy problem. If you run an e-commerce aggregator, a price comparison platform, a bulk-buying app, or a market research firm covering consumer electronics, you need to know what local shops are charging today. Not MRP. Not Amazon's price. The actual number a shopkeeper will quote you on the phone if you ask about a specific fridge or AC.
+
+That data lives in shopkeepers' heads. Some of it leaks onto WhatsApp groups or Instagram stories. None of it is scrapeable. Phone calls are the only reliable way to get it.
+
+A human operator can make maybe 15-20 of these calls a day. They need to speak Hindi or Hinglish fluently. They need to handle shopkeepers who are busy, evasive, confused about exactly which model you're asking about, or trying to upsell you on a different product. Each call is 3-5 minutes of focused conversation. 20 calls a day, per operator, is generous.
+
+For a platform covering one product category across 500 stores, weekly, that's a team of 10-15 full-time callers. The economics don't work.
+
+## Who'd use this
+
+- Price intelligence platforms doing competitive surveillance across local retail
+- Bulk-buying aggregators coordinating purchases across store networks
+- Market research firms running recurring price surveys for consumer goods
+- Large retailers doing franchise compliance checks (is your franchisee actually offering the deal we advertised?)
+- D2C brands verifying distributor pricing in Tier 2/3 cities
+- Insurance or lending platforms needing automated vernacular outbound calls for KYC or follow-ups
+
+The common thread: any Indian business that currently has humans making dozens of vernacular phone calls a day for data collection or verification.
+
+## What was built
+
+An end-to-end pipeline. Five stages.
+
+**1. Intake.**
+User tells the system what they want. Product, budget, location, brand preferences. Conversational, takes 2 minutes.
+
+**2. Research.**
+The system searches the web and builds a knowledge pack about the product. What the MRP usually is. What features matter. What shopkeeper tricks to watch for. This becomes context for the voice agent so it can push back on inflated quotes.
+
+**3. Store discovery.**
+Finds local shops that sell the product. Pulls phone numbers, areas, nearby landmarks.
+
+**4. Calling.**
+The agent dials each shop over SIP (phone) or WebRTC (browser). Confirms shop identity. Asks about the product. Gets a price. Pushes back. Asks about warranty, installation, delivery. Hangs up when done. Full transcript saved.
+
+**5. Analysis.**
+An LLM reads every transcript and extracts structured quotes. Price, warranty terms, installation cost, delivery options. Ranks stores by best value.
+
+Start to finish for one buyer intent (say, a fridge across 10 stores) takes 15 minutes of human time and 30 minutes of parallel calling.
+
+## The hard parts
+
+The obvious challenge was voice quality. The less obvious ones were where the real work happened.
+
+**Hindi numbers aren't English numbers.**
+The LLM outputs prices as digits (`37500`). A Hindi TTS engine expects Hindi words (`saadhe saintees hazaar`). The conversion isn't "37500 to thirty-seven thousand five hundred in Hindi" because Hindi has unique words for every number 1 to 99, plus special cases for half-thousands (`saadhe`), 1.5 (`dedh`), 2.5 (`dhaai`), and so on. I wrote a dedicated number-to-Hindi-words converter with 99 base forms plus special cases.
+
+**LLMs leak Devanagari.**
+The prompt tells the model to output Romanized Hindi only. The model mostly complies. It occasionally emits mixed output like `usका` instead of `uska`. Sarvam TTS handles clean Romanized Hindi well but trips on mixed Devanagari. I wrote a deterministic Devanagari-to-Latin transliterator as a safety net. Zero latency when there's no Devanagari, kicks in automatically when there is.
+
+**Role adherence.**
+Early versions would break character when shopkeepers asked "where do you live?" or "what do you do?". The agent would say "I'm an AI" or evade in ways that felt off. I built per-store metadata (a concrete residential neighborhood the agent can mention) plus 8 behavioral constraints that get checked per response during testing. The agent stays in character as a regular customer.
+
+**Turn-taking.**
+Phone conversations have rhythm. Shopkeepers interrupt, pause, ask clarifying questions mid-answer. The agent needs to handle this without talking over them or falling silent. I used a multilingual turn-detection model plus Silero VAD, tuned for Hindi.
+
+**Conversation quality at scale.**
+I built a testing framework with 11 scripted shopkeeper scenarios derived from real call transcripts. Cooperative, defensive, evasive, question-reversing, interruption-heavy. Each response gets scored against 8 behavioral constraints plus 5 conversation-level dimensions. 214 tests in total. 188 unit, 26 live against the real LLM. This is how prompt changes get validated without burning budget on bad deployments.
+
+## The numbers
+
+- 22+ Indian languages supported (Sarvam auto-detects input language)
+- 39 speaker voices available (picked `shubh`, a male voice that reads as a regular customer in his 30s)
+- Sub-2-second latency per turn across VAD, STT, LLM, normalization, TTS
+- LLM switchable between Claude Haiku and a self-hosted Qwen3-4B (running on a home GPU)
+- 214 automated tests covering conversation quality
+- Per-call cost at Claude Haiku prices: roughly 3 to 5 cents per 3-minute conversation
+- Deployed on a Kubernetes homelab cluster via ArgoCD, with Docker image builds triggered on every push to main
+
+## What this translates to for a client engagement
+
+If you run any of the businesses listed above, this is the kind of system I can build for you. The foundation is done. What changes per client is integration, domain tuning, and scale.
+
+Typical engagement shape:
+
+**Weeks 1-2: integration + domain customization.**
+Your product catalog, your data format, your calling volume, your call scripts tuned to your vertical. If you're doing HVAC pricing instead of consumer electronics, the research layer and prompt change. If you're doing insurance follow-ups instead of price checks, the conversation flow changes.
+
+**Weeks 3-4: deployment + tuning.**
+Live calls against a pilot set of numbers. Transcript review. Prompt adjustments. Scale-up to your target volume.
+
+**Ongoing: monitoring + iteration.**
+Weekly transcript review, constraint refinement as shopkeepers learn new patterns, scale-up as volume grows.
+
+Cost depends on call volume and customization scope. For reference, the base build took ~200 hours across 3 months. Commercial deployment is faster because the foundation exists.
+
+## For potential clients
+
+If you're evaluating whether a voice agent is worth building for your business,
+this is the kind of system I can build end-to-end. A good starting point is the
+[AI Operations Audit](/audit/): I'll look at your team's current manual work and
+tell you whether voice, chat, document processing, or something else is the
+highest-value place to automate first.
+
+The deep technical writeup of CallKaro is on the
+[blog](/blog/projects/building-callkaro/).
+
+<div class="cta-row">
+  <CTAButton label={`Buy the audit ($${AUDIT_PRICE_USD})`} href={PAYPAL_LINK} variant="primary" external />
+  <CTAButton label="Book a call" href={CALENDLY_CALL_URL} variant="secondary" external />
+</div>
+
+<style>{`
+  .cta-row {
+    margin: 2rem 0 1rem;
+  }
+`}</style>
