@@ -13,11 +13,11 @@ const SITE_URL = 'https://dewanggogte.com';
 
 // Per-page descriptions
 const pageDescriptions: Record<string, string> = {
-  '/': 'Startup operator based in Bangalore. Open to freelance, consulting, and part-time work.',
+  '/': 'AI and automation consultant in Bangalore. I build agents, document pipelines, and internal tools that replace manual operational work.',
   '/games/': 'Free browser games — identify watches, guess insects, and more.',
-  '/projects/': 'Projects by Dewang Gogte — stock screeners, voice AI agents, and web experiments.',
-  '/resume/': 'Resume of Dewang Gogte — startup operator based in Bangalore, India.',
-  '/blog/': 'Writing about startups, projects, and things I learn along the way.',
+  '/projects/': 'Projects by Dewang Gogte — voice AI agents, stock screeners, and other things I have built.',
+  '/resume/': 'Resume of Dewang Gogte — AI and automation consultant, Bangalore.',
+  '/blog/': 'Writing about AI agents, automation, and things I learn building them.',
 };
 
 const pathname = Astro.url.pathname;
@@ -40,7 +40,15 @@ const homepageJsonLD = {
       '@id': `${SITE_URL}/#person`,
       name: 'Dewang Gogte',
       url: SITE_URL,
-      jobTitle: 'Startup Operator',
+      jobTitle: 'AI & Automation Consultant',
+      description: 'AI and automation consultant in Bangalore. I build agents, document pipelines, and internal tools that replace manual operational work.',
+      knowsAbout: [
+        'AI Agents',
+        'Voice AI',
+        'Workflow Automation',
+        'Document Processing',
+        'Product Consulting',
+      ],
       sameAs: [
         'https://linkedin.com/in/dewanggogte',
         'https://instagram.com/dewangraphy',

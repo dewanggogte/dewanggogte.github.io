@@ -12,20 +12,20 @@ const projects = [
         link: "/blog/projects/building-beacon"
     },
     {
-        name: "dewanggogte.com",
-        description: "Minimal personal website built with Astro and MDX. Zero JavaScript, static, content-first.",
-        tags: ["astro", "mdx", "web"],
-        color: "#e8d3d3",
-        thumb: "/projects/dewanggogte-com.svg",
-        link: "/blog/projects/building-this-site"
-    },
-    {
         name: "CallKaro",
         description: "Offline voice AI agent that calls local vendors and collects competitive quotes for consumer electronics.",
         tags: ["voice-ai", "python", "livekit"],
         color: "#d3dde8",
         thumb: "/projects/callkaro.svg",
         link: "https://callkaro.nikamma.in"
+    },
+    {
+        name: "dewanggogte.com",
+        description: "Minimal personal website built with Astro and MDX. Zero JavaScript, static, content-first.",
+        tags: ["astro", "mdx", "web"],
+        color: "#e8d3d3",
+        thumb: "/projects/dewanggogte-com.svg",
+        link: "/blog/projects/building-this-site"
     }
 ];
 ---
@@ -58,10 +58,9 @@ const projects = [
     <p class="disclaimer">Some projects are hosted on free-tier infrastructure. Expect up to a 30-second cold start on first load, and the UI may look different from what's described here — these are works in progress.</p>
 
     <Footer links={[
-        { label: "Resume", href: "/resume", external: true },
+        { label: "Resume", href: "/resume/", external: true },
         { label: "Home", href: "/" },
-        { label: "Blog", href: "/blog" },
-        { label: "Games", href: "/games" }
+        { label: "Blog", href: "/blog/" }
     ]} />
 </Base>
 

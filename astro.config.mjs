@@ -6,7 +6,6 @@ import sitemap from '@astrojs/sitemap';
 const lastModDates = {
   'https://dewanggogte.com/': '2026-03-17',
   'https://dewanggogte.com/blog/': '2026-03-17',
-  'https://dewanggogte.com/blog/weekly/Week03/': '2026-01-17',
   'https://dewanggogte.com/blog/til/why_til_26-01-2026/': '2026-01-26',
   'https://dewanggogte.com/blog/til/hosting-your-own-website/': '2026-02-24',
   'https://dewanggogte.com/blog/til/custom-domain-email/': '2026-02-24',
@@ -15,8 +14,8 @@ const lastModDates = {
   'https://dewanggogte.com/blog/projects/building-callkaro/': '2026-02-17',
   'https://dewanggogte.com/blog/projects/building-beacon/': '2026-03-17',
   'https://dewanggogte.com/games/': '2026-03-17',
-  'https://dewanggogte.com/projects/': '2026-03-17',
-  'https://dewanggogte.com/resume/': '2026-01-01',
+  'https://dewanggogte.com/projects/': '2026-04-24',
+  'https://dewanggogte.com/resume/': '2026-04-24',
 };
 
 export default defineConfig({

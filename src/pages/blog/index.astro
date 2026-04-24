@@ -4,19 +4,21 @@ import Footer from '../../components/Footer.astro';
 
 const allPosts = await Astro.glob('./**/*.mdx');
 
-const articles = allPosts.filter(post => post.frontmatter.type === 'article');
+const HIDDEN_TIL_SLUGS = new Set([
+    '/blog/til/why_til_26-01-2026/',
+    '/blog/til/hosting-your-own-website/',
+    '/blog/til/custom-domain-email/',
+]);
 
-const tils = allPosts.filter(post => post.frontmatter.type === 'til');
-const projectPosts = allPosts.filter(post => post.frontmatter.type === 'project');
+const posts = allPosts
+    .filter(post => post.frontmatter.type === 'project' || post.frontmatter.type === 'til')
+    .filter(post => !HIDDEN_TIL_SLUGS.has(post.url ?? ''));
 
 // Sort by date descending
 const sortByDate = (a: any, b: any) =>
     new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime();
 
-articles.sort(sortByDate);
-
-tils.sort(sortByDate);
-projectPosts.sort(sortByDate);
+posts.sort(sortByDate);
 ---
 
 <Base title="Blog - Dewang Gogte">
@@ -24,11 +26,11 @@ projectPosts.sort(sortByDate);
         <h1><a href="/" class="home-link">Dewang Gogte</a></h1>
     </header>
 
-    {projectPosts.length > 0 && (
+    {posts.length > 0 && (
         <section class="blog-section">
-            <h2>Projects</h2>
+            <h2>Blogs</h2>
             <ul class="post-list">
-                {projectPosts.map(post => (
+                {posts.map(post => (
                     <li>
                         <a href={post.url}>{post.frontmatter.title}</a>
                         <span class="post-date">{post.frontmatter.date}</span>
@@ -38,43 +40,14 @@ projectPosts.sort(sortByDate);
         </section>
     )}
 
-    {articles.length > 0 && (
-        <section class="blog-section">
-            <h2>Articles</h2>
-            <ul class="post-list">
-                {articles.map(post => (
-                    <li>
-                        <a href={post.url}>{post.frontmatter.title}</a>
-                        <span class="post-date">{post.frontmatter.date}</span>
-                    </li>
-                ))}
-            </ul>
-        </section>
-    )}
-
-    {tils.length > 0 && (
-        <section class="blog-section">
-            <h2>T.I.L.</h2>
-            <ul class="post-list">
-                {tils.map(post => (
-                    <li>
-                        <a href={post.url}>{post.frontmatter.title}</a>
-                        <span class="post-date">{post.frontmatter.date}</span>
-                    </li>
-                ))}
-            </ul>
-        </section>
-    )}
-
-    {allPosts.length === 0 && (
+    {posts.length === 0 && (
         <p class="empty-state">No posts yet. Check back soon!</p>
     )}
 
     <Footer links={[
-        { label: "Resume", href: "/resume", external: true },
+        { label: "Resume", href: "/resume/", external: true },
         { label: "Home", href: "/" },
-        { label: "Projects", href: "/projects" },
-        { label: "Games", href: "/games" }
+        { label: "Projects", href: "/projects/" }
     ]} />
 </Base>
 
