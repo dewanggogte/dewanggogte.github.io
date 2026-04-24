@@ -1,0 +1,75 @@
+---
+// src/components/CTAButton.astro
+interface Props {
+  label: string;
+  href: string;
+  variant?: 'primary' | 'secondary';
+  external?: boolean;
+}
+
+const { label, href, variant = 'primary', external = false } = Astro.props;
+const rel = external ? 'noopener noreferrer' : undefined;
+const target = external ? '_blank' : undefined;
+---
+
+<a
+  href={href}
+  class={`cta-button cta-${variant}`}
+  target={target}
+  rel={rel}
+>
+  {label}
+</a>
+
+<style>
+  .cta-button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: inherit;
+    line-height: 1.2;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .cta-button + .cta-button {
+    margin-left: 0.75rem;
+  }
+
+  .cta-primary {
+    background: var(--accent);
+    color: #fff;
+    border: 1px solid var(--accent);
+  }
+
+  .cta-primary:hover {
+    background: #9d4a30;
+    border-color: #9d4a30;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .cta-secondary {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+
+  .cta-secondary:hover {
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  @media (max-width: 480px) {
+    .cta-button {
+      display: block;
+      text-align: center;
+    }
+    .cta-button + .cta-button {
+      margin-left: 0;
+      margin-top: 0.75rem;
+    }
+  }
+</style>
