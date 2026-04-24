@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Turn the current minimal personal site into a freelance acquisition funnel by shipping the `/audit/` landing page, `/services/` overview, two case studies, a post-payment thank-you page, and the supporting home-page and SEO updates. Launch is the ACTIVE path only (single-price $250, post-payment reconciliation, external Google Form). Items marked DEFERRED in `spec_website_changes.md` are explicitly NOT built.
+**Goal:** Turn the current minimal personal site into a freelance acquisition funnel by shipping the `/audit/` landing page, `/services/` overview, two case studies, a post-payment thank-you page, and the supporting home-page and SEO updates. Launch is the ACTIVE path only (single-price $497, post-payment reconciliation, external Google Form). Items marked DEFERRED in `spec_website_changes.md` are explicitly NOT built.
 
 **Architecture:** Static Astro 5 site. All new pages inherit the existing `Base.astro` layout (640px container, warm-cream background `#fdfcfb`, serif typography, rust-orange accent `#b85a3b`). The two case studies reuse the wider 800px `BlogPost.astro` layout via `.mdx` frontmatter, matching existing blog-post typography. One new component — `CTAButton.astro` — introduces the first styled button in the codebase and is the only new visual element. No JavaScript beyond what Astro already emits. External services (PayPal, Calendly, Google Form) are linked by URL placeholder tokens that get replaced once the pipeline spec is wired.
 
@@ -18,17 +18,17 @@
 - After a logical group of pages ships, run `npm run dev`, open the page in a browser, and eyeball the layout, copy, and link destinations.
 - Final end-to-end funnel test (PayPal $1 invoice → Google Form → reconciliation) is covered in the pipeline spec, not here. This plan ends at "pages render correctly with placeholder URLs".
 
-**Placeholder URL tokens** — used verbatim in the code until the pipeline spec's external setup is complete. Kept in a single `src/config/audit.ts` module so the final find-and-replace is a one-file change:
-- `TODO:PAYPAL_LINK` — PayPal.me link at $250 or hosted-button URL
-- `TODO:CALENDLY_10MIN_URL` — Calendly "Audit questions — 10 min" event link
-- `TODO:GOOGLE_FORM_URL` — Google Form shareable short URL for intake
+**External URL constants in `src/config/audit.ts`:**
+- `PAYPAL_LINK = 'https://www.paypal.com/ncp/payment/PHAQHJKXEBN52'` — hosted PayPal NCP button URL (fixed-amount $497, opens in new tab, returns to `/audit/thank-you/` after payment).
+- `CALENDLY_CALL_URL = 'https://calendly.com/dewanggogte/30min'` — single Calendly event linked from the website (30-min intro/questions call). Other events (understanding call, review call) are booked via email after intake, not linked from the site.
+- `GOOGLE_FORM_URL = 'TODO:GOOGLE_FORM_URL'` — only remaining placeholder. Swap in Task 11 once the Google Form is set up per pipeline spec §11.
 
 **Risks & Tradeoffs:**
 - *No automated tests.* The build passing does not prove the copy is correct or the links go to the right place. Mitigation: Task 12 is a manual browser walkthrough with an explicit checklist.
 - *First styled button in the codebase.* `CTAButton.astro` sets a precedent. Keeping it scoped to just primary/secondary variants — no sizes, no icons — so it doesn't bloat before we know what we actually need.
-- *Placeholder URLs ship to main.* If the pipeline spec isn't ready when we push, CTAs will 404 or `href="TODO:..."` will break the page. Mitigation: centralise the placeholders in `src/config/audit.ts` and make the final task (Task 11) an explicit swap. Alternatively, gate the deploy until placeholders are real — up to the user.
+- *One placeholder URL still ships.* `GOOGLE_FORM_URL` is `TODO:` until the pipeline spec completes — the "Open the intake form" CTA on `/audit/thank-you/` will be a broken link until Task 11. Low risk: `/audit/thank-you/` is only reached after a real PayPal payment, and the page text tells the buyer to reply to the PayPal receipt email if anything is unclear. Still, don't deploy publicly until Task 11 is done.
 - *Case-study port uses MDX + BlogPost layout.* Easier to write, but the BlogPost layout has a "Back to Blog" link in its header. We accept this for launch (a case study with a "Back to Blog" link is still usable) and file a followup to make the back-link configurable. Noted at the end of the plan.
-- *No A/B price test at launch.* Single price $250. All A/B mechanics in spec §3.1.1 are DEFERRED. The plan preserves this as `src/config/audit.ts`'s `PRICE = 250` constant so re-enabling is a small code change, not a rewrite.
+- *No A/B price test at launch.* Single price $497. All A/B mechanics in spec §3.1.1 are DEFERRED. The plan preserves this as `src/config/audit.ts`'s `PRICE = 497` constant so re-enabling is a small code change, not a rewrite.
 
 ---
 
@@ -73,13 +73,14 @@
 // src/config/audit.ts
 //
 // Single source of truth for external URLs used by the audit funnel.
-// Replace the TODO values once the pipeline spec (spec_automated_pipeline.md §11)
-// is complete. Keep the token names — they are grep-able for the replacement pass.
+// GOOGLE_FORM_URL is still a TODO placeholder until the pipeline spec
+// (spec_automated_pipeline.md §11) completes. Keep the token name — it's
+// grep-able for the replacement pass.
 
-export const AUDIT_PRICE_USD = 250;
+export const AUDIT_PRICE_USD = 497;
 
-export const PAYPAL_LINK = 'TODO:PAYPAL_LINK';
-export const CALENDLY_10MIN_URL = 'TODO:CALENDLY_10MIN_URL';
+export const PAYPAL_LINK = 'https://www.paypal.com/ncp/payment/PHAQHJKXEBN52';
+export const CALENDLY_CALL_URL = 'https://calendly.com/dewanggogte/30min';
 export const GOOGLE_FORM_URL = 'TODO:GOOGLE_FORM_URL';
 ```
 
@@ -228,7 +229,7 @@ Replace the existing `pageDescriptions` object (lines 15-21) with:
 ```ts
 const pageDescriptions: Record<string, string> = {
   '/': 'Freelance AI automation and product work for businesses with manual operational processes. Based in Bangalore, working globally.',
-  '/audit/': 'Fixed $250 AI Operations Audit. I find 20+ hours a week of work your team can automate, or the audit is free.',
+  '/audit/': 'Fixed $497 AI Operations Audit. I find 20+ hours a week of work your team can automate, or the audit is free.',
   '/audit/thank-you/': 'Thanks for booking the AI Operations Audit. Here are the next steps.',
   '/services/': 'Freelance AI automation, product consulting, and fractional ops. Services, pricing, and case studies from Dewang Gogte.',
   '/services/case-studies/callkaro/': 'Case study: voice AI agent for Hindi price checks across local stores in India. Built by Dewang Gogte.',
@@ -435,7 +436,7 @@ git commit -m "feat: post-payment thank-you page with noindex"
 import Base from '../../layouts/Base.astro';
 import Footer from '../../components/Footer.astro';
 import CTAButton from '../../components/CTAButton.astro';
-import { PAYPAL_LINK, CALENDLY_10MIN_URL, AUDIT_PRICE_USD } from '../../config/audit';
+import { PAYPAL_LINK, CALENDLY_CALL_URL, AUDIT_PRICE_USD } from '../../config/audit';
 
 // JSON-LD for the audit service
 const auditJsonLD = {
@@ -458,7 +459,7 @@ const auditJsonLD = {
 };
 ---
 
-<Base title="AI Operations Audit — $250" jsonLD={auditJsonLD}>
+<Base title="AI Operations Audit — $497" jsonLD={auditJsonLD}>
   <header>
     <h1>AI Operations Audit</h1>
   </header>
@@ -485,8 +486,8 @@ const auditJsonLD = {
         external
       />
       <CTAButton
-        label="10-min call first?"
-        href={CALENDLY_10MIN_URL}
+        label="30-min call first?"
+        href={CALENDLY_CALL_URL}
         variant="secondary"
         external
       />
@@ -650,8 +651,8 @@ const auditJsonLD = {
         external
       />
       <CTAButton
-        label="Or book a 10-min call first"
-        href={CALENDLY_10MIN_URL}
+        label="Or book a 30-min call first"
+        href={CALENDLY_CALL_URL}
         variant="secondary"
         external
       />
@@ -703,7 +704,7 @@ Expected:
 - Fits the 640px container.
 - Two CTAs in the hero, sitting side-by-side on desktop, stacking on mobile (resize browser below 480px to check).
 - All case-study and services links go to their target routes (they'll 404 until Tasks 6-8 land — that's fine for this check, just confirm the hrefs are correct).
-- View page source — confirm JSON-LD `<script type="application/ld+json">` block is present, and `Service` and `$250` appear inside.
+- View page source — confirm JSON-LD `<script type="application/ld+json">` block is present, and `Service` and `$497` appear inside.
 
 Stop the dev server.
 
@@ -736,7 +737,7 @@ git commit -m "feat: /audit/ landing page"
 import Base from '../../layouts/Base.astro';
 import Footer from '../../components/Footer.astro';
 import CTAButton from '../../components/CTAButton.astro';
-import { CALENDLY_10MIN_URL, AUDIT_PRICE_USD } from '../../config/audit';
+import { CALENDLY_CALL_URL, AUDIT_PRICE_USD } from '../../config/audit';
 ---
 
 <Base title="Services — Dewang Gogte">
@@ -857,8 +858,8 @@ import { CALENDLY_10MIN_URL, AUDIT_PRICE_USD } from '../../config/audit';
         variant="primary"
       />
       <CTAButton
-        label="Book a 10-min call"
-        href={CALENDLY_10MIN_URL}
+        label="Book a call"
+        href={CALENDLY_CALL_URL}
         variant="secondary"
         external
       />
@@ -939,7 +940,7 @@ description: "Case study: voice AI agent for Hindi price checks across local sto
 ---
 
 import CTAButton from '../../../components/CTAButton.astro';
-import { PAYPAL_LINK, CALENDLY_10MIN_URL, AUDIT_PRICE_USD } from '../../../config/audit';
+import { PAYPAL_LINK, CALENDLY_CALL_URL, AUDIT_PRICE_USD } from '../../../config/audit';
 
 {/* PASTE: the body content from /Users/dg/lab/job_apps/case_studies/callkaro_case_study.md,
    ported verbatim. Apply the voice rules:
@@ -963,7 +964,7 @@ The deep technical writeup of CallKaro is on the
 
 <div class="cta-row">
   <CTAButton label={`Buy the audit ($${AUDIT_PRICE_USD})`} href={PAYPAL_LINK} variant="primary" external />
-  <CTAButton label="Book a call" href={CALENDLY_10MIN_URL} variant="secondary" external />
+  <CTAButton label="Book a call" href={CALENDLY_CALL_URL} variant="secondary" external />
 </div>
 
 <style>
@@ -1033,7 +1034,7 @@ description: "Case study: autonomous equity research platform covering all 5,300
 ---
 
 import CTAButton from '../../../components/CTAButton.astro';
-import { PAYPAL_LINK, CALENDLY_10MIN_URL, AUDIT_PRICE_USD } from '../../../config/audit';
+import { PAYPAL_LINK, CALENDLY_CALL_URL, AUDIT_PRICE_USD } from '../../../config/audit';
 
 {/* PASTE: the body content from /Users/dg/lab/job_apps/case_studies/beacon_case_study.md,
    ported verbatim. Follow the same porting rules as Task 7:
@@ -1055,7 +1056,7 @@ The deep technical writeup of Beacon is on the
 
 <div class="cta-row">
   <CTAButton label={`Buy the audit ($${AUDIT_PRICE_USD})`} href={PAYPAL_LINK} variant="primary" external />
-  <CTAButton label="Book a call" href={CALENDLY_10MIN_URL} variant="secondary" external />
+  <CTAButton label="Book a call" href={CALENDLY_CALL_URL} variant="secondary" external />
 </div>
 
 <style>
@@ -1120,7 +1121,7 @@ I help businesses automate the repetitive operational work their teams are doing
 
 Before this, I was at Iden (Accel), Drip Capital (YC + Accel), and American Express. Studied Biotech and AI at IIT Kharagpur.
 
-If you run a business with manual operational work that could be automated, I run a fixed $250 [AI Operations Audit](/audit/). About 10 days end-to-end, mostly async, money-back if I can't find at least 20 hours a week of automatable work.
+If you run a business with manual operational work that could be automated, I run a fixed $497 [AI Operations Audit](/audit/). About 10 days end-to-end, mostly async, money-back if I can't find at least 20 hours a week of automatable work.
 
 This site is a place to share my thoughts, projects, and some [photos](https://instagram.com/dewangraphy) and [music](https://open.spotify.com/user/iwg7ch1br16aowx3t2sankj9a). More of all that over time.
 
@@ -1240,35 +1241,33 @@ git commit -m "feat: sitemap includes new audit and services routes"
 
 ---
 
-## Task 11: Replace placeholder URLs
+## Task 11: Replace the Google Form URL placeholder
 
-**When to do this:** only after the pipeline spec (`spec_automated_pipeline.md` §11) external tool setup is complete, which produces real PayPal, Calendly, and Google Form URLs. If that's not ready yet, skip this task and mark it explicitly — do NOT deploy to production with `TODO:` URLs.
+**When to do this:** only after the Google Form is created per pipeline spec §11.3. PayPal and Calendly URLs are already wired in Task 1. Only `GOOGLE_FORM_URL` remains as a `TODO:` string.
 
 **Files:**
 - Modify: `src/config/audit.ts`
 
-- [ ] **Step 1: Obtain the real URLs from the pipeline spec**
+- [ ] **Step 1: Obtain the Google Form URL**
 
-Three URLs needed. Paste them here once available:
-- `PAYPAL_LINK` = `<paste URL>`
-- `CALENDLY_10MIN_URL` = `<paste URL>`
+Paste the real shareable URL here:
 - `GOOGLE_FORM_URL` = `<paste URL>`
 
 - [ ] **Step 2: Replace in `src/config/audit.ts`**
 
-Edit `src/config/audit.ts`. Replace each `TODO:XXX` string with the real URL. Keep the variable names.
+Edit `src/config/audit.ts`. Change `'TODO:GOOGLE_FORM_URL'` to the real URL. Keep the variable name.
 
-- [ ] **Step 3: Grep-sweep for any stragglers**
+- [ ] **Step 3: Grep-sweep for stragglers**
 
 Run: `grep -r "TODO:" src/`
-Expected: zero results. If any TODO strings remain, they were missed — fix them.
+Expected: zero results. If any `TODO:` strings remain, they were missed — fix them.
 
-- [ ] **Step 4: Production build + dev-server spot check**
+- [ ] **Step 4: Production build + spot check**
 
 Run: `npm run build`
 Expected: clean build.
 
-Then `npm run dev`, visit `/audit/`, click each of the two CTAs, confirm they go to the real PayPal and Calendly URLs.
+Then `npm run dev`, visit `/audit/thank-you/`, click "Open the intake form", confirm it opens the real Google Form in a new tab.
 
 Stop the dev server.
 
@@ -1276,7 +1275,7 @@ Stop the dev server.
 
 ```bash
 git add src/config/audit.ts
-git commit -m "feat: wire real PayPal, Calendly, Google Form URLs"
+git commit -m "feat: wire real Google Form URL for intake"
 ```
 
 ---
@@ -1299,14 +1298,14 @@ Walk every path:
 - [ ] From `/`, click the availability pill → lands on `/services/`.
 - [ ] From `/`, click the "AI Operations Audit" link in the bio → lands on `/audit/`.
 - [ ] From `/`, click each footer link → correct destination.
-- [ ] From `/audit/`, click the primary hero CTA → opens PayPal in a new tab at the correct $250 link.
-- [ ] From `/audit/`, click the secondary hero CTA → opens Calendly 10-min event in a new tab.
+- [ ] From `/audit/`, click the primary hero CTA → opens PayPal in a new tab at the correct $497 link.
+- [ ] From `/audit/`, click the secondary hero CTA → opens Calendly 30-min event in a new tab.
 - [ ] From `/audit/`, click the CallKaro link → lands on `/services/case-studies/callkaro/`.
 - [ ] From `/audit/`, click the Beacon link → lands on `/services/case-studies/beacon/`.
 - [ ] From `/audit/`, scroll to the bottom CTAs → both work.
 - [ ] Visit `/audit/thank-you/` directly → the "Open the intake form" button opens the Google Form in a new tab.
 - [ ] From `/services/`, click the audit CTA → lands on `/audit/`.
-- [ ] From `/services/`, click the "Book a 10-min call" CTA → opens Calendly.
+- [ ] From `/services/`, click the "Book a call" CTA → opens Calendly.
 - [ ] From `/services/case-studies/callkaro/`, scroll to the CTA block → both buttons route correctly.
 - [ ] From `/services/case-studies/beacon/`, scroll to the CTA block → both buttons route correctly.
 
@@ -1381,6 +1380,6 @@ Things observed during planning that should become separate issues, not scope cr
 | §7 Implementation order | This plan matches steps 1-9 of §7 |
 | §8 Voice check | Task 12 Step 6 (humanizer pass) |
 
-**Placeholder scan.** No "TBD", "TODO later", or "Similar to Task N" in task bodies. The only `TODO:` strings are the three deliberate URL placeholder tokens — they're explicitly named and there's a dedicated task (Task 11) to replace them.
+**Placeholder scan.** No "TBD", "TODO later", or "Similar to Task N" in task bodies. The only `TODO:` string remaining is `TODO:GOOGLE_FORM_URL` — explicitly named, with Task 11 dedicated to replacing it.
 
-**Type consistency.** `CTAButton` is referenced with the same four props (`label`, `href`, `variant`, `external`) across Tasks 2, 4, 5, 6, 7, 8. `src/config/audit.ts` exports the same three names (`PAYPAL_LINK`, `CALENDLY_10MIN_URL`, `GOOGLE_FORM_URL`) that every importing task uses. `AUDIT_PRICE_USD` is used consistently in Tasks 5, 6, 7, 8.
+**Type consistency.** `CTAButton` is referenced with the same four props (`label`, `href`, `variant`, `external`) across Tasks 2, 4, 5, 6, 7, 8. `src/config/audit.ts` exports the same three names (`PAYPAL_LINK`, `CALENDLY_CALL_URL`, `GOOGLE_FORM_URL`) that every importing task uses. `AUDIT_PRICE_USD` is used consistently in Tasks 5, 6, 7, 8.
