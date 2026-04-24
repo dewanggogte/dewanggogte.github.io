@@ -1,0 +1,156 @@
+---
+// src/pages/services/index.astro
+import Base from '../../layouts/Base.astro';
+import Footer from '../../components/Footer.astro';
+import CTAButton from '../../components/CTAButton.astro';
+import { CALENDLY_CALL_URL, AUDIT_PRICE_USD } from '../../config/audit';
+---
+
+<Base title="Services — Dewang Gogte">
+  <header>
+    <h1>Services</h1>
+  </header>
+
+  <section class="bio">
+
+    <p>
+      I'm a freelance AI and automation engineer based in Bangalore. I work with
+      businesses that have a lot of repetitive operational work sitting on their
+      team's plate, and I either audit it, automate it, or embed in the team to
+      do both. Most of my clients are in the US and UK, some in India.
+    </p>
+
+    <h2>AI agents and automation</h2>
+    <p>
+      The core of what I do. The kind of work that an LLM plus a well-designed
+      pipeline can take over from a human.
+    </p>
+    <p>
+      <strong>Workflow automation.</strong><br/>
+      The repetitive stuff. Quote generation, inbox triage, appointment
+      reminders, invoice chasing, lead enrichment. Usually a mix of scripts, a
+      light LLM layer, and glue between whatever tools you already use.
+    </p>
+    <p>
+      <strong>Document processing.</strong><br/>
+      Extracting structured data from PDFs, invoices, contracts, forms. Usually
+      a vision LLM plus a validation pass plus a human-in-the-loop fallback for
+      the edge cases that matter.
+    </p>
+    <p>
+      <strong>Voice pipelines.</strong><br/>
+      Inbound or outbound voice agents. Good for high-volume, low-complexity
+      calls: price checks, appointment booking, follow-ups, survey collection.
+      See the CallKaro case study below for an end-to-end example.
+    </p>
+    <p>
+      <strong>Internal tools that replace a spreadsheet.</strong><br/>
+      When a team has grown past the Google Sheet that was meant to hold the
+      business together. Small web apps, Retool dashboards, CLI tools.
+    </p>
+
+    <h2>Product consulting</h2>
+    <p>
+      For founders with too many ideas and not enough clarity on what to build
+      first. I run a structured discovery, give you a scoped roadmap, and usually
+      stay on to help ship the first thing. Half of my Iden and Drip Capital
+      work looked like this.
+    </p>
+
+    <h2>Fractional ops / founder's office</h2>
+    <p>
+      Embedded, not advising. I sit in your team's Slack, own a slice of the
+      automation roadmap, and report into the founder or COO. Good for
+      early-stage companies that need the output of a senior operator without
+      the salary.
+    </p>
+
+    <h2>What I've built</h2>
+    <p>
+      <strong><a href="/services/case-studies/callkaro/">CallKaro: voice AI for Hindi price checks</a>.</strong>
+      Autonomous agent that calls local Indian stores in Hindi and Hinglish and
+      collects structured price quotes. Built for retail intelligence and market
+      research use cases.
+    </p>
+    <p>
+      <strong><a href="/services/case-studies/beacon/">Beacon: autonomous equity research at scale</a>.</strong>
+      Platform that scrapes and scores all 5,300 listed Indian companies, with a
+      4-agent LLM pipeline producing independent qualitative analysis on top.
+    </p>
+    <p>
+      Both are public on GitHub. Individual case studies cover the problem, what
+      was built, the hard parts, and what a client engagement in that space
+      would look like.
+    </p>
+
+    <h2>Pricing</h2>
+    <p>Straight numbers, no discovery-phase billing.</p>
+    <p>
+      <strong>AI Operations Audit.</strong><br/>
+      ${AUDIT_PRICE_USD}. One-time. About 10 days end-to-end.
+      <a href="/audit/">More details</a>.
+    </p>
+    <p>
+      <strong>Implementation projects.</strong><br/>
+      $1,500 to $10,000 depending on scope. A simple workflow automation is not
+      the same as a full voice agent system. We figure out the number after I
+      understand the problem.
+    </p>
+    <p>
+      <strong>Monthly retainer.</strong><br/>
+      $3,000 to $6,000 per month. 15-20 hours a week. Good for businesses with a
+      backlog of things to fix, or teams replacing repetitive work currently
+      handled by an offshore BPO partner.
+    </p>
+    <p>
+      <strong>Fractional AI operations.</strong><br/>
+      $5,000 to $10,000 per month. Embedded in your team, owning the automation
+      roadmap. Not advising. Doing.
+    </p>
+
+    <h2>How to start</h2>
+    <p>
+      Easiest path: buy the <a href="/audit/">AI Operations Audit</a>. Mostly
+      async, about 10 days end-to-end (includes one 30-min call to make sure
+      I've got the picture right), ${AUDIT_PRICE_USD}, money-back if I can't find
+      at least 20 hours a week of automatable work.
+    </p>
+    <p>If you'd rather talk first, book a call.</p>
+
+    <div class="cta-row">
+      <CTAButton
+        label={`Buy the audit ($${AUDIT_PRICE_USD})`}
+        href="/audit/"
+        variant="primary"
+      />
+      <CTAButton
+        label="Book a call"
+        href={CALENDLY_CALL_URL}
+        variant="secondary"
+        external
+      />
+    </div>
+
+  </section>
+
+  <Footer links={[
+    { label: "Audit", href: "/audit/" },
+    { label: "Home", href: "/" },
+    { label: "Blog", href: "/blog/" },
+    { label: "Projects", href: "/projects/" },
+    { label: "Resume", href: "/resume/", external: true }
+  ]} />
+</Base>
+
+<style>
+  .cta-row {
+    margin: 1.5rem 0 2.5rem;
+  }
+
+  .bio h2 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+</style>
