@@ -4,7 +4,11 @@ import sitemap from '@astrojs/sitemap';
 
 // Map of URLs to their last significant content update
 const lastModDates = {
-  'https://dewanggogte.com/': '2026-03-17',
+  'https://dewanggogte.com/': '2026-04-24',
+  'https://dewanggogte.com/audit/': '2026-04-24',
+  'https://dewanggogte.com/services/': '2026-04-24',
+  'https://dewanggogte.com/services/case-studies/callkaro/': '2026-04-24',
+  'https://dewanggogte.com/services/case-studies/beacon/': '2026-04-24',
   'https://dewanggogte.com/blog/': '2026-03-17',
   'https://dewanggogte.com/blog/til/why_til_26-01-2026/': '2026-01-26',
   'https://dewanggogte.com/blog/til/hosting-your-own-website/': '2026-02-24',
@@ -24,6 +28,9 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
+      filter: (page) => !page.includes('/audit/thank-you'),
+      // DEFERRED — when /audit/checkout/ is built (spec §3.2), extend to:
+      // filter: (page) => !page.includes('/audit/checkout') && !page.includes('/audit/thank-you'),
       customPages: [
         'https://dewanggogte.com/games/bugs/',
         'https://dewanggogte.com/games/watchguessr/',
