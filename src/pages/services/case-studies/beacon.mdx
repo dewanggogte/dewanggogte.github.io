@@ -1,102 +1,125 @@
 ---
 layout: ../../../layouts/BlogPost.astro
-title: "Beacon: autonomous equity research at scale"
+title: "Beacon: a multi-agent analysis pipeline"
 date: "April 24, 2026"
 type: "project"
-description: "Case study: autonomous equity research platform covering all 5,300 Indian listed companies. Built by Dewang Gogte."
+description: "Case study: a multi-agent LLM pipeline that scores and analyzes large datasets cheaply and reliably, with guardrails against hallucinations. Demoed on 5,300+ Indian listed companies. Built by Dewang Gogte."
+backLinkText: "Back to Services"
+backLinkUrl: "/services/"
 ---
 
 import CTAButton from '../../../components/CTAButton.astro';
 import { PAYPAL_LINK, CALENDLY_CALL_URL, AUDIT_PRICE_USD } from '../../../config/audit';
 
-A case study on Beacon, a research platform that scrapes, scores, and analyzes every listed Indian company using quantitative frameworks and a multi-agent LLM pipeline.
+An AI system that scores and analyzes thousands of items at once, designed to stay cheap and not make things up.
 
-Built as a portfolio project structured around the real needs of a boutique investment firm. Public at [github.com/dewanggogte/beacon](https://github.com/dewanggogte/beacon). Technical deep dive on the [blog](/blog/projects/building-beacon/).
+<div class="case-callout">
 
----
+**Analyzes thousands of items end-to-end, cheaply, without hallucinations**<br/>
+Multiple AI agents work in parallel, with built-in guardrails: tiered analysis to keep costs bounded, automatic fact-checking to catch hallucinations, and divergence alerts when the system disagrees with itself. Demoed on 5,300+ Indian listed companies — 21 metrics, 4 framework evaluators, 4 specialized AI agents. Full pipeline runs end-to-end in under an hour. Public on [GitHub](https://github.com/dewanggogte/beacon). Technical deep-dive on [the blog](/blog/projects/building-beacon/).
+
+</div>
 
 ## The problem
 
-Boutique PMSes, family offices, and retail investment platforms in India all share the same problem. The public market has 5,300+ listed companies. Traditional analyst teams can only deeply cover 30-50. Everything else gets ignored, screened out by crude filters, or covered sporadically when a name pops up in the news.
+Most LLM pipelines run into the same three problems as they scale:
 
-The real alpha sits in the companies nobody's looking at. Small-cap mispricings. Mid-cap governance problems hiding in plain sight. Quality compounders outside the Nifty 500. Firms without the headcount to cover the full market are systematically missing this.
+- **Costs balloon.** Run a multi-agent analysis over 5,000 items and the bill gets ugly fast.
+- **Models hallucinate.** They confidently invent numbers, misattribute facts, and agree with themselves on things that aren't true.
+- **Generic scoring loses signal.** A one-size-fits-all model treats everything the same. In the real world, the same metric means different things in different contexts.
 
-The conventional solution is to buy expensive screener databases (Bloomberg, Capitaline) and write SQL. That tells you which companies rank well on ROE. It doesn't tell you which ones are actually worth owning. Which ones have promoter red flags. Which ones have hidden segment risk. How any of this changes across macro regimes.
+These three problems compound. You can't just throw more compute at a hallucinating system, and you can't trust a cheap-and-fast pipeline to be right.
 
-A platform needs three things to solve this properly. Full-market coverage (not the top 500). A defensible scoring methodology (not "high ROE"). Qualitative analysis layered on top of the quant (because financials alone miss governance and business quality).
+Beacon is built around solving those three problems first, with equity research as the worked example. The Indian public market has 5,300+ listed companies — too many for any human team to cover, and a clean stress test for all three failure modes. The same patterns that make Beacon work apply to any domain where you need to score, rank, and deepen analysis across a large dataset.
 
-None of this scales with humans.
+## Where this pattern fits
 
-## Who'd use this
+<div class="card-grid">
+  <div class="case-card">
+    <strong>Vendor & supplier risk</strong>
+    <p>Score thousands of vendors on financial health, compliance, and concentration risk.</p>
+  </div>
+  <div class="case-card">
+    <strong>Candidate screening</strong>
+    <p>Triage applicant pools deeper than keyword matching, with structured reasoning per candidate.</p>
+  </div>
+  <div class="case-card">
+    <strong>Lead qualification</strong>
+    <p>Score and rank a CRM full of leads using domain-specific signals, not generic ICP filters.</p>
+  </div>
+  <div class="case-card">
+    <strong>Claims & transaction triage</strong>
+    <p>Flag anomalies, score risk, and route only the few that need a human to look closer.</p>
+  </div>
+  <div class="case-card">
+    <strong>RFP & proposal evaluation</strong>
+    <p>Score incoming proposals against your criteria with reasoning per dimension, not gut feel.</p>
+  </div>
+  <div class="case-card">
+    <strong>Compliance & document review</strong>
+    <p>Surface contract risk, regulatory red flags, or policy violations across large document sets.</p>
+  </div>
+</div>
 
-- Boutique PMSes running sub-₹500 Cr AUM that can't afford a 10-analyst team
-- Family offices managing public equity allocations alongside other asset classes
-- Fintech platforms offering stock screening, advisory, or curated portfolios to retail investors
-- Research firms selling systematic coverage to institutional clients
-- SEBI-registered RIAs who need defensible, framework-based recommendations
-- Individual HNIs running their own book who want analyst-grade coverage without hiring
-
-The common thread: anyone who needs opinionated, well-justified coverage of the full Indian listed universe, not just the top 500.
+The common thread: any team that needs to triage a large list and deepen analysis on a qualified subset, where wrong answers cost money. Beacon's worked example happens to be Indian equities. The architecture works across these domains.
 
 ## What was built
 
-Two-layer architecture. Every company goes through Layer 1. A qualified subset goes through Layer 2.
+Two-layer architecture. Every item goes through Layer 1. A qualified subset goes through Layer 2.
 
-**Layer 1: quantitative scoring.**
+**Layer 1: deterministic pre-filter**<br/>
+A fast, rule-based scoring pass over the entire dataset before any LLM touches it. In Beacon's case, every company gets scored on 21 metrics across 5 dimensions: valuation (25% weight), quality (30%), governance (20%), safety (15%), momentum (10%). Sector-specific adjustments because a bank's 15% ROE is excellent and a FMCG company's 15% ROE is mediocre. The same context-awareness applies in any domain.
 
-Every company gets scored on 21 metrics across 5 dimensions: valuation (25% weight), quality (30%), governance (20%), safety (15%), momentum (10%). Sector-specific adjustments for IT, Banking, Pharma, Manufacturing, and FMCG (because a bank's 15% ROE is excellent and a FMCG company's 15% ROE is mediocre; the same score across sectors is meaningless).
+Four domain-specific evaluators run in parallel. In this case, classic investing frameworks — in another domain they'd be your own scoring rubrics:
 
-Four framework evaluators run in parallel:
-- Buffett's 10-criteria checklist (economic moat, consistent earnings, low capex, etc.)
+- Buffett's 10-criteria checklist (economic moat, consistent earnings, low capex)
 - Graham's defensive screen (debt-to-equity, earnings stability, dividend record)
 - Lynch's 6-category classification (fast grower, stalwart, slow grower, cyclical, turnaround, asset play)
 - Pabrai's risk assessment (6 factors)
 
-Eight hard disqualifiers flag companies regardless of score. Consecutive losses, promoter stake decline greater than 10pp a year, related-party transaction concentration above threshold, etc.
+Eight hard disqualifiers act as rule-based filters that flag items regardless of score — consecutive losses, promoter stake decline greater than 10pp a year, related-party transaction concentration above threshold, etc. The pattern: cheap, deterministic rules catch the obvious failures before LLMs ever see them.
 
-Composite score is classification-aware. Fast growers weight Lynch's framework at 30%. Stalwarts weight dividend safety and quality higher. A single one-size-fits-all composite misses the point.
+Composite score is classification-aware — scoring weights vary by item type. Fast growers weight Lynch's framework at 30%. Stalwarts weight dividend safety and quality higher. The same logic applies anywhere one-size-fits-all scoring would lose signal.
 
 Final classification: strong_long (>=80), potential_long (>=65), neutral (>=40), potential_short (>=20), strong_avoid (below 20).
 
-**Layer 2: multi-agent LLM analysis.**
-
-A 4-agent pipeline with structured chain-of-thought prompts:
+**Layer 2: multi-agent LLM analysis**<br/>
+A 4-agent pipeline with structured chain-of-thought prompts. Each agent has a narrow role:
 
 - **AG1, Fundamentals.** Business quality, competitive moats, growth trajectory.
-- **AG2, Governance.** Promoter track record, related-party transactions, capital allocation history.
-- **AG3, Risk (Devil's Advocate).** Must surface at least 2 material risks per company. Deliberately adversarial.
-- **AG4, Synthesis.** Final assessment with macro regime context and peer comparison. Has authority to override the Layer 1 quant classification.
+- **AG2, Governance.** Promoter track record, related-party transactions, capital allocation.
+- **AG3, Risk (Devil's Advocate).** Must surface at least 2 material risks per item. Deliberately adversarial — its job is to find reasons not to.
+- **AG4, Synthesis.** Final assessment with macro context and peer comparison. Has authority to override Layer 1.
 
-AG1 and AG4 each produce independent scores (0-100), not just adjustments to the quant score. Both the quant and AG4 classifications are preserved in the dashboard with attribution for each, so the user always sees where the opinion came from.
+The adversarial agent is the single most transferable idea here. Most LLM pipelines have all the agents agreeing with each other. AG3 exists specifically to push back, and it changes the output quality dramatically.
 
-**Funnel tiering controls LLM cost.**
+AG1 and AG4 each produce independent scores (0-100), not just adjustments to the quant score. Both Layer 1 and AG4 classifications are preserved with attribution, so the user always sees where the opinion came from.
 
-Top 100 quant-ranked companies get full AG1 to AG4. The next 500 get AG1 screening, and the top 100 from that cohort get promoted to full analysis. Remaining 4,500+ get Layer 1 quant coverage only. This concentrates LLM spend where depth matters while keeping full-market coverage intact.
+**Funnel tiering controls cost**<br/>
+The headline cost-control pattern. The top 100 Layer 1 items get full AG1 to AG4. The next 500 get AG1 screening, and the top 100 from that cohort get promoted to full analysis. The remaining 4,500+ get Layer 1 coverage only. Concentrates LLM spend where depth actually matters while keeping full-dataset coverage intact. The same architecture works for any large dataset — only the tier sizes change.
 
-**Post-validation catches hallucinations.**
+**Post-validation catches hallucinations**<br/>
+The headline reliability pattern. LLM outputs get cross-checked against the actual underlying data. If AG4 writes "strong promoter track record" but the data shows a 15pp promoter stake decline in 3 years, the system flags the contradiction and down-ranks the claim. This treats LLM output as a separate signal to be validated, not as ground truth.
 
-LLM outputs get cross-checked against the actual quantitative data. If AG4 writes "strong promoter track record" but the data shows a 15pp promoter stake decline in 3 years, the system flags the contradiction and down-ranks the claim. This design treats LLM output as a separate signal to be validated, not as ground truth.
-
-**Divergence watcher for human review.**
-
-When quant and AG4 disagree significantly on classification, an email alert goes out. The interesting companies are always the ones the two layers disagree on. Humans review those explicitly.
+**Divergence watcher for human review**<br/>
+When Layer 1 and AG4 disagree significantly, an alert fires. The interesting items are usually the ones the two layers disagree on — that's where humans should spend their time. Same pattern works anywhere you have a deterministic signal and an LLM signal that should mostly agree.
 
 ## The hard parts
 
-**Scraping without getting blocked.**
-Screener.in serves 13 years of financials, ratios, shareholding, and peer comparisons per company. Scraping 5,300 companies sustainably means careful rate limiting, rotating user agents, and graceful handling of HTML structure changes. I used native fetch + Cheerio, no headless browser needed. The whole scrape finishes in a few hours.
+**Ingesting messy upstream data reliably**<br/>
+Screener.in serves 13 years of financials, ratios, shareholding, and peer comparisons per company. Scraping 5,300 companies sustainably means careful rate limiting, rotating user agents, and graceful handling of HTML structure changes. Native fetch + Cheerio, no headless browser needed. The whole scrape finishes in a few hours. Same engineering applies to any large-scale data ingestion job.
 
-**Sector-specific weighting.**
-The same financial metric means completely different things across sectors. A bank with 15% ROE is excellent. A FMCG company with 15% ROE is mediocre. I built per-sector weight adjustments and metric substitutions (NIM for banks instead of operating margin, asset turnover for retail, etc.).
+**Context-aware scoring**<br/>
+The same metric means completely different things across contexts. A bank with 15% ROE is excellent. A FMCG company with 15% ROE is mediocre. Built per-sector weight adjustments and metric substitutions (NIM for banks instead of operating margin, asset turnover for retail). Any classification or scoring system that ignores context is leaving signal on the table.
 
-**Classification-aware scoring.**
-Lynch's framework splits companies into 6 categories, and each deserves different weighting. A fast grower's composite should emphasize momentum and growth. A stalwart should emphasize quality and dividend safety. I built the entire composite engine to vary by Lynch category. Different weight tables, different disqualifiers, different thresholds.
+**Composite scoring that varies by item type**<br/>
+Lynch's framework splits companies into 6 categories, and each deserves different weighting. A fast grower's composite should emphasize momentum and growth. A stalwart should emphasize quality and dividend safety. The whole composite engine varies by category — different weight tables, different disqualifiers, different thresholds.
 
-**LLM hallucinations on financial data.**
+**LLM hallucinations on factual data**<br/>
 Claude and Qwen are great at reasoning. They also confidently make up numbers. Post-validation became essential. Every numerical claim AG1-AG4 makes gets cross-referenced against actual data. Contradictions override the LLM. The dual-scoring design (AG1 and AG4 as independent scores, not adjustments) lets the system treat LLM output as a separate input rather than as truth.
 
-**Making 8 dashboard pages useful, not pretty.**
-Most financial dashboards bury the signal in data tables. Beacon shows conviction badges, framework-specific breakdowns, agent reasoning visible per claim, and backtest results alongside the live picks. The design is warm, minimal, light-theme. Deliberately not a Bloomberg terminal.
+**Making output legible to non-engineer reviewers**<br/>
+Most analytical dashboards bury the signal in data tables. Beacon shows conviction badges, framework-specific breakdowns, agent reasoning visible per claim, and validation flags alongside the picks. Warm, minimal, light-theme. Deliberately not a Bloomberg terminal. Whoever's reviewing the output shouldn't need to be an engineer to use it.
 
 ## The numbers
 
@@ -105,46 +128,71 @@ Most financial dashboards bury the signal in data tables. Beacon shows convictio
 - 4 specialized LLM agents with funnel tiering (top 100 + next 100 promoted = 200 full analyses per run)
 - Post-validation catches roughly 1 in 5 LLM claims that contradict quant data in testing
 - Dashboard: 8 pages, Next.js 15, Tailwind, deployed on K3s via ArgoCD
-- Pipeline runs end to end in under an hour on a home GPU with Qwen 3.5, or on Claude Haiku for a few dollars per full scan
+- Pipeline runs end-to-end in under an hour on a home GPU with Qwen 3.5, or on Claude Haiku for a few dollars per full scan
 - Monorepo structure with 4 packages (shared, scraper, analyzer, dashboard)
 
-## What this translates to for a client engagement
+## What this looks like for a client
 
-If you run a boutique PMS, family office, retail investment platform, fintech with a screening or advisory layer, or an investment research firm covering Indian equities, this is the kind of system I can build for you.
+If your team is running LLM analysis over a large dataset, or wants to, this is the kind of system I can build for you.
 
-Possible engagement shapes:
+**Multi-agent pipeline for your domain (3-4 weeks)**<br/>
+Your data, your evaluators, your scoring logic, built into the Beacon-style architecture. You own the IP. Outputs structured, validated reports your team can actually trust.
 
-**Custom scoring layer (3-4 weeks).**
-Your scoring philosophy, your sector weights, your disqualifiers, built into the existing engine. You own the IP.
+**Hallucination guardrails on an existing LLM workflow (2-3 weeks)**<br/>
+You already have an LLM pipeline. It works most of the time. Sometimes it lies. I bolt on post-validation and divergence detection so the lies surface before they reach a user.
 
-**Full platform, white-labeled (8-12 weeks).**
-Beacon's architecture, adapted to your branding, your data sources, your user flows. Ends with a deployable system.
+**Funnel architecture for an expensive LLM workflow (3-4 weeks)**<br/>
+Your existing pipeline runs LLM analysis on every item, and the bill is too high. I redesign the flow into tiered passes — cheap deterministic pre-filter, light LLM screening, deep LLM analysis only on the qualified subset. Typically cuts LLM cost by 80%+ without losing coverage.
 
-**LLM research pipeline only (4-6 weeks).**
-Your existing quant data, plus a multi-agent qualitative layer on top. Validates against your data. Outputs framework-specific reports.
+**End-to-end pilot on your dataset (8-12 weeks)**<br/>
+Beacon's full architecture, adapted to your domain. Ingestion, scoring, multi-agent analysis, validation, dashboard. Ends with a deployable system your team owns.
 
-**Single-name deep dives on-demand (ongoing retainer).**
-Your team requests any Indian-listed name, gets back a framework-based report in 24 hours. Good for boutique PMSes that don't want to run the full pipeline themselves.
+The base system took ~400 hours across 5 months. Numbers depend on scope.
 
-Numbers depend on scope. The base system took ~400 hours across 5 months.
+## Want this kind of system?
 
-## For potential clients
-
-If you're evaluating whether a data-gathering + LLM-analysis pipeline is worth
-building for your research workflow, this is the kind of system I can build
-end-to-end. A good starting point is the
-[AI Operations Audit](/audit/): I'll look at your team's current research and
-analysis process and tell you where automation is likely to pay off fastest.
-
-The deep technical writeup of Beacon is on the
-[blog](/blog/projects/building-beacon/).
+If your team is doing a lot of analysis or research by hand, or running LLM pipelines that are too expensive or too unreliable, the [AI Operations Audit](/audit/) is the cleanest first step. It tells you where automation is likely to pay off fastest, before you commit to a build.
 
 <div class="cta-row">
-  <CTAButton label={`Buy the audit ($${AUDIT_PRICE_USD})`} href={PAYPAL_LINK} variant="primary" external />
-  <CTAButton label="Book a call" href={CALENDLY_CALL_URL} variant="secondary" external />
+  <CTAButton label={`Book an audit ($${AUDIT_PRICE_USD})`} href={PAYPAL_LINK} variant="primary" external />
+  <CTAButton label="Schedule a call" href={CALENDLY_CALL_URL} variant="secondary" external />
 </div>
 
 <style>{`
+  .case-callout {
+    border-left: 3px solid var(--accent);
+    background: #fff;
+    padding: 0.85rem 1.1rem;
+    margin: 0.25rem 0 1.5rem;
+    border-radius: 0 4px 4px 0;
+  }
+  .case-callout p {
+    margin: 0;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin: 0.5rem 0 1.5rem;
+  }
+  .case-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    background: #fff;
+  }
+  .case-card strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+  .case-card p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
   .cta-row {
     margin: 2rem 0 1rem;
   }

@@ -9,9 +9,13 @@ interface Props {
     description?: string;
     titleLinkText?: string;
     titleLinkUrl?: string;
+    backLinkText?: string;
+    backLinkUrl?: string;
 }
 
-const { title, date, type, description, titleLinkText, titleLinkUrl } = Astro.props.frontmatter || Astro.props;
+const { title, date, type, description, titleLinkText, titleLinkUrl, backLinkText, backLinkUrl } = Astro.props.frontmatter || Astro.props;
+const resolvedBackLinkText = backLinkText || 'Back to Blog';
+const resolvedBackLinkUrl = backLinkUrl || '/blog/';
 const typeLabels: Record<string, string> = {
     'weekly-review': 'Weekly Review',
     'article': 'Article',
@@ -91,7 +95,7 @@ const jsonLD = {
         <header>
             <div class="header-row">
                 <h1><a href="/" class="home-link">Dewang Gogte</a></h1>
-                <a href="/blog/" class="back-link">&larr; Back to Blog</a>
+                <a href={resolvedBackLinkUrl} class="back-link">&larr; {resolvedBackLinkText}</a>
             </div>
             <span class="post-type">{typeLabel}</span>
             <p class="post-title">{titleLinkText && titleLinkUrl ? <Fragment>{title.split(titleLinkText)[0]}<a href={titleLinkUrl}>{titleLinkText}</a>{title.split(titleLinkText).slice(1).join(titleLinkText)}</Fragment> : title}</p>
@@ -103,7 +107,6 @@ const jsonLD = {
         </article>
 
         <Footer links={[
-            { label: "Resume", href: "/resume/", external: true },
             { label: "Home", href: "/" },
             { label: "Projects", href: "/projects/" }
         ]} />

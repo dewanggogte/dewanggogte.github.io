@@ -6,7 +6,7 @@ import Footer from '../components/Footer.astro';
 
 <header>
     <h1>Dewang Gogte</h1>
-    <p class="location">Bangalore, India</p>
+    <p class="location">AI &amp; automation engineer · Bangalore</p>
 </header>
 
 <div class="available">
@@ -15,13 +15,17 @@ import Footer from '../components/Footer.astro';
 
 <section class="bio">
 
-I help businesses automate the repetitive operational work their teams are doing by hand. That usually means AI agents, document processing, voice pipelines, or internal tools that replace a spreadsheet. Sometimes it's product consulting for founders who have too many ideas and not enough clarity on what to build first.
+I help businesses automate the repetitive operational work their teams are doing by hand. Usually that's AI agents, document processing, voice pipelines, or internal tools that replace a spreadsheet. Sometimes it's product consulting for founders with too many ideas and not enough clarity on what to build first.
+<br/>
+<div class="audit-callout">
 
-Before this, I was at Iden (Accel), Drip Capital (YC + Accel), and American Express. Studied Biotech and AI at IIT Kharagpur.
+**Run an audit on your team's manual work**<br/>
+Fixed $250, about 10 days end-to-end, mostly async. Money back if I don't find 20+ hours a week of automatable work. [More on the audit &rarr;](/audit/)
 
-If you run a business with manual operational work that could be automated, I run a fixed $250 [AI Operations Audit](/audit/). About 10 days end-to-end, mostly async, money-back if I can't find at least 20 hours a week of automatable work.
+</div>
+<br/>
+I have 3+ years of work experience at startups and MNCs, including Drip Capital (YC) and American Express. Prior to that I studied Biotech and AI at IIT Kharagpur, the premier technical institute of India.
 
-This site is a place to share my thoughts, projects, and some [photos](https://instagram.com/dewangraphy) and [music](https://open.spotify.com/user/iwg7ch1br16aowx3t2sankj9a). More of all that over time.
 
 </section>
 
@@ -29,6 +33,19 @@ This site is a place to share my thoughts, projects, and some [photos](https://i
     { label: "Services", href: "/services/" },
     { label: "Audit", href: "/audit/" },
     { label: "Blog", href: "/blog/" },
-    { label: "Projects", href: "/projects/" },
-    { label: "Resume", href: "/resume/", external: true }
+    { label: "Projects", href: "/projects/" }
 ]} />
+
+<style>{`
+    .audit-callout {
+        border-left: 3px solid var(--accent);
+        background: #fff;
+        padding: 0.85rem 1.1rem;
+        margin: 0.5rem 0 1.25rem;
+        border-radius: 0 4px 4px 0;
+    }
+
+    .audit-callout p {
+        margin: 0;
+    }
+`}</style>

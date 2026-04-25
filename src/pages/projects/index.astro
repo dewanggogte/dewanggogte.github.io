@@ -9,7 +9,7 @@ const projects = [
         tags: ["typescript", "llm", "next.js"],
         color: "#e8e0d3",
         thumb: "/projects/beacon.svg",
-        link: "/blog/projects/building-beacon"
+        link: "/blog/projects/building-beacon/"
     },
     {
         name: "CallKaro",
@@ -17,7 +17,7 @@ const projects = [
         tags: ["voice-ai", "python", "livekit"],
         color: "#d3dde8",
         thumb: "/projects/callkaro.svg",
-        link: "https://callkaro.nikamma.in"
+        link: "https://callkaro.nikamma.in/"
     },
     {
         name: "dewanggogte.com",
@@ -25,7 +25,7 @@ const projects = [
         tags: ["astro", "mdx", "web"],
         color: "#e8d3d3",
         thumb: "/projects/dewanggogte-com.svg",
-        link: "/blog/projects/building-this-site"
+        link: "/blog/projects/building-this-site/"
     }
 ];
 ---
@@ -35,6 +35,13 @@ const projects = [
         <h1><a href="/" class="home-link">Dewang Gogte</a></h1>
         <p class="page-subtitle">Projects</p>
     </header>
+
+    <p class="case-studies-line">
+        Case studies for prospects:
+        <a href="/services/case-studies/callkaro/">CallKaro</a>
+        <span aria-hidden="true">·</span>
+        <a href="/services/case-studies/beacon/">Beacon</a>
+    </p>
 
     <section class="projects-grid">
         {projects.map(project => (
@@ -58,7 +65,6 @@ const projects = [
     <p class="disclaimer">Some projects are hosted on free-tier infrastructure. Expect up to a 30-second cold start on first load, and the UI may look different from what's described here — these are works in progress.</p>
 
     <Footer links={[
-        { label: "Resume", href: "/resume/", external: true },
         { label: "Home", href: "/" },
         { label: "Blog", href: "/blog/" }
     ]} />
@@ -74,8 +80,23 @@ const projects = [
         margin-top: 0.25rem;
     }
 
+    .case-studies-line {
+        margin-top: 1.75rem;
+        font-size: 0.95rem;
+        color: var(--text-light);
+    }
+
+    .case-studies-line a {
+        margin: 0 0.15rem;
+    }
+
+    .case-studies-line span {
+        color: var(--border);
+        margin: 0 0.1rem;
+    }
+
     .projects-grid {
-        margin-top: 2.5rem;
+        margin-top: 1.5rem;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1.25rem;
